@@ -1,19 +1,22 @@
 # Amirhossein Mohammadpour — Portfolio
 
-A cinematic, responsive personal portfolio built with vanilla HTML, CSS and JavaScript for GitHub Pages.
+Cinematic personal portfolio built with vanilla HTML, CSS and JavaScript.
 
-## Included
-- Cinematic hero and loading sequence
-- Scroll-reveal storytelling
-- Premium dark glass UI
-- Interactive 3D project cards
-- Pointer/magnetic interactions on desktop
-- Reduced-motion accessibility support
-- Mobile/tablet/desktop responsive layout
-- GitHub Pages deployment workflow
-
-## Source of portfolio project facts
-Project names, repositories and technology references are based on the public GitHub repositories used in the portfolio. The VPN repository is intentionally omitted.
+## Structure
+- `index.html` — portfolio page
+- `styles.css` — responsive premium visual system
+- `script.js` — scroll reveal, pointer interactions, typing and motion
+- `favicon.svg` — favicon
+- `404.html` — GitHub Pages fallback
 
 ## GitHub Pages
-The repository contains a GitHub Actions workflow at `.github/workflows/pages.yml` that deploys the `main` branch to GitHub Pages.
+The site is a static site and is ready to publish from the `main` branch.
+
+In GitHub, open **Settings → Pages**, choose **Deploy from a branch**, select **main** and **/(root)**, then save.
+
+The repository also contains a lightweight GitHub Actions validation workflow that checks the required site files. It does not require GitHub Pages to be enabled.
+
+The VPN repository is intentionally excluded from the portfolio.
+
+## Project facts
+Portfolio project names, repository links and technology references were taken from the GitHub repositories inspected while building this site. No extra project was invented.
