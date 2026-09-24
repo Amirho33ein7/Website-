@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#05070d" />
+  <meta name="description" content="Amirhossein Mohammadpour — Developer, Creator, Software Builder. A cinematic portfolio of software projects." />
+  <meta property="og:title" content="Amirhossein Mohammadpour — Portfolio" />
+  <meta property="og:description" content="Developer • Creator • Software Builder" />
+  <meta property="og:type" content="website" />
+  <title>Amirhossein Mohammadpour — Portfolio</title>
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="loader__mark">AM</div>
+    <div class="loader__line"><span></span></div>
+    <div class="loader__label">INITIALIZING PORTFOLIO</div>
+  </div>
+
+  <div class="cursor cursor--dot" id="cursorDot"></div>
+  <div class="cursor cursor--ring" id="cursorRing"></div>
+  <div class="noise" aria-hidden="true"></div>
+  <div class="ambient ambient--one" aria-hidden="true"></div>
+  <div class="ambient ambient--two" aria-hidden="true"></div>
+
+  <header class="site-header" id="top">
+    <a class="brand magnetic" href="#top" aria-label="Back to top">
+      <span class="brand__dot"></span>
+      <span>AM</span>
+    </a>
+    <nav class="site-nav" aria-label="Primary navigation">
+      <a href="#about">About</a>
+      <a href="#skills">Skills</a>
+      <a href="#projects">Projects</a>
+      <a href="#contact">Contact</a>
+    </nav>
+    <a class="header-link magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noreferrer">GitHub ↗</a>
+  </header>
+
+  <div class="scroll-progress" aria-hidden="true"><span id="scrollProgress"></span></div>
+
+  <main>
+    <section class="hero section" aria-labelledby="hero-title">
+      <div class="hero__grid" aria-hidden="true"></div>
+      <div class="hero__content container">
+        <div class="eyebrow reveal">PORTFOLIO / 2026</div>
+        <h1 id="hero-title" class="hero__title reveal reveal--delay-1">
+          <span class="hero__line">Amirhossein</span>
+          <span class="hero__line hero__line--accent">Mohammadpour</span>
+        </h1>
+        <div class="hero__sub reveal reveal--delay-2">
+          <span class="typed" id="typedText">Developer</span><span class="typed__caret">_</span>
+          <span class="hero__separator">/</span>
+          <span>Creator</span>
+          <span class="hero__separator">/</span>
+          <span>Software Builder</span>
+        </div>
+        <p class="hero__lede reveal reveal--delay-3">
+          A cinematic archive of software I build, learn from, and keep pushing forward.
+        </p>
+        <div class="hero__actions reveal reveal--delay-4">
+          <a class="button button--primary magnetic" href="#projects">Explore the work <span>↓</span></a>
+          <a class="button button--ghost magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noreferrer">Open GitHub ↗</a>
+        </div>
+      </div>
+      <div class="hero__meta container reveal reveal--delay-4">
+        <span>SCROLL TO DISCOVER</span>
+        <span class="hero__meta-line"></span>
+        <span>01 — 05</span>
+      </div>
+      <div class="hero__orb" aria-hidden="true"></div>
+    </section>
+
+    <section class="story section" id="about" aria-labelledby="about-title">
+      <div class="container story__layout">
+        <div class="section-kicker reveal">01 / THE STORY</div>
+        <div class="story__copy">
+          <h2 id="about-title" class="section-title reveal">Built by curiosity,<br /><em>shaped by projects.</em></h2>
+          <div class="story__columns reveal reveal--delay-1">
+            <p>
+              I’m Amirhossein Mohammadpour — a developer building software by turning ideas into working projects.
+              My GitHub work moves across Python utilities, interactive web experiments, Telegram automation, and Flutter-based Android software.
+            </p>
+            <p>
+              This portfolio is less of a résumé and more of a timeline of things I chose to build.
+              Each project is a snapshot of a problem, a tool, and a new layer of what I learned while making it real.
+            </p>
+          </div>
+          <div class="story__links reveal reveal--delay-2">
+            <a class="inline-link magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noreferrer">GitHub <span>↗</span></a>
+            <a class="inline-link magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noreferrer">LinkedIn <span>↗</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="skills section" id="skills" aria-labelledby="skills-title">
+      <div class="container">
+        <div class="section-kicker reveal">02 / TOOLKIT</div>
+        <div class="skills__head">
+          <h2 id="skills-title" class="section-title reveal">Tools I actually<br /><em>use in projects.</em></h2>
+          <p class="muted reveal reveal--delay-1">Observed directly from the code and project structure on GitHub — not a self-reported wish list.</p>
+        </div>
+        <div class="skills-grid">
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">01</span><h3>Python</h3><p>Used across console tools, automation and the Telegram bot project.</p><span class="skill-card__tag">PY</span></article>
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">02</span><h3>Flutter / Dart</h3><p>Used to build the LowGuard Android application and its app architecture.</p><span class="skill-card__tag">DART</span></article>
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">03</span><h3>HTML</h3><p>Used for the interactive Ario game experience hosted as a single web page.</p><span class="skill-card__tag">WEB</span></article>
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">04</span><h3>Android</h3><p>Present through the Flutter-based Android project and its native Android structure.</p><span class="skill-card__tag">APP</span></article>
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">05</span><h3>SQLite</h3><p>The LowGuard project uses local SQLite storage for its local-first data flow.</p><span class="skill-card__tag">DATA</span></article>
+          <article class="skill-card reveal magnetic-card"><span class="skill-card__number">06</span><h3>GitHub</h3><p>Source control, project publishing and the home for the work shown here.</p><span class="skill-card__tag">GIT</span></article>
+        </div>
+      </div>
+    </section>
+
+    <section class="projects section" id="projects" aria-labelledby="projects-title">
+      <div class="container">
+        <div class="section-kicker reveal">03 / SELECTED WORK</div>
+        <div class="projects__intro">
+          <h2 id="projects-title" class="section-title reveal">The projects<br /><em>behind the profile.</em></h2>
+          <p class="muted reveal reveal--delay-1">Scroll through the work one frame at a time.</p>
+        </div>
+
+        <div class="project-stack">
+          <article class="project project--featured reveal magnetic-card" data-project="01">
+            <div class="project__visual project__visual--green">
+              <div class="project__glow"></div>
+              <div class="project__terminal">
+                <div><span class="term-dot"></span><span class="term-dot"></span><span class="term-dot"></span></div>
+                <p>$ flutter build apk</p><p class="term-muted">LowGuard / local-first / Android</p><p class="term-ok">✓ ready for build</p>
+              </div>
+              <span class="project__index">01</span>
+            </div>
+            <div class="project__body">
+              <div class="project__meta"><span>FLUTTER · DART · ANDROID</span><span>LOWGUARD</span></div>
+              <h3>نگهبان قند <span>/ LowGuard</span></h3>
+              <p>یک اپلیکیشن Android با Flutter برای ثبت قند خون، غذا و فعالیت، تحلیل الگوهای شخصی و یادآوری بررسی قند. خود پروژه نیز به‌صورت صریح آن را ابزار یادآوری و ثبت داده می‌داند، نه تشخیص پزشکی.</p>
+              <div class="project__footer"><span>01 / 05</span><a class="inline-link magnetic" href="https://github.com/Amirho33ein7/ghandchand" target="_blank" rel="noreferrer">View repository <span>↗</span></a></div>
+            </div>
+          </article>
+
+          <article class="project reveal magnetic-card" data-project="02">
+            <div class="project__visual project__visual--violet"><div class="project__rings"></div><span class="project__index">02</span><span class="project__visual-label">HTML / INTERACTIVE</span></div>
+            <div class="project__body">
+              <div class="project__meta"><span>HTML EXPERIENCE</span><span>ARIO GAME</span></div>
+              <h3>Ario Game</h3>
+              <p>یک تجربه بازی مرورگری که در یک فایل HTML مستقل نگهداری شده و به‌عنوان یکی از پروژه‌های تعاملی GitHub معرفی شده است.</p>
+              <div class="project__footer"><span>02 / 05</span><a class="inline-link magnetic" href="https://github.com/Amirho33ein7/ario-game" target="_blank" rel="noreferrer">View repository <span>↗</span></a></div>
+            </div>
+          </article>
+
+          <article class="project reveal magnetic-card" data-project="03">
+            <div class="project__visual project__visual--blue"><div class="project__code-lines"></div><span class="project__index">03</span><span class="project__visual-label">PYTHON / TELEGRAM</span></div>
+            <div class="project__body">
+              <div class="project__meta"><span>PYTELEBOTAPI · AIOHTTP</span><span>AMIRBOT</span></div>
+              <h3>AmirBot / AmirFacts</h3>
+              <p>ربات تلگرام پایتونی با polling غیرهمزمان، راه‌اندازی دیتابیس و وابستگی‌هایی مثل pyTelegramBotAPI، aiohttp و cryptography.</p>
+              <div class="project__footer"><span>03 / 05</span><a class="inline-link magnetic" href="https://github.com/Amirho33ein7/amirbot" target="_blank" rel="noreferrer">View repository <span>↗</span></a></div>
+            </div>
+          </article>
+
+          <article class="project reveal magnetic-card" data-project="04">
+            <div class="project__visual project__visual--orange"><div class="project__receipt"><span>ORDER</span><b>PYTHON</b><small>5% COURIER FEE</small></div><span class="project__index">04</span><span class="project__visual-label">CONSOLE / PYTHON</span></div>
+            <div class="project__body">
+              <div class="project__meta"><span>PYTHON</span><span>FOOD DELIVERY</span></div>
+              <h3>Food Delivery Python</h3>
+              <p>برنامه سفارش غذای خط فرمان با انتخاب آیتم‌ها، ثبت اطلاعات سفارش، محاسبه قیمت کل و محاسبه کمیسیون پیک.</p>
+              <div class="project__footer"><span>04 / 05</span><a class="inline-link magnetic" href="https://github.com/Amirho33ein7/food-delivery-python" target="_blank" rel="noreferrer">View repository <span>↗</span></a></div>
+            </div>
+          </article>
+
+          <article class="project reveal magnetic-card" data-project="05">
+            <div class="project__visual project__visual--cyan"><div class="project__gauge"><span></span></div><span class="project__index">05</span><span class="project__visual-label">PYTHON / LOGIC</span></div>
+            <div class="project__body">
+              <div class="project__meta"><span>PYTHON</span><span>FUEL CHECKER</span></div>
+              <h3>Benzine Fuel Level Checker</h3>
+              <p>ابزار خط فرمان برای بررسی میزان بنزین نسبت به ظرفیت باک و نمایش هشدارهای مرحله‌ای بر اساس آستانه‌های تعریف‌شده.</p>
+              <div class="project__footer"><span>05 / 05</span><a class="inline-link magnetic" href="https://github.com/Amirho33ein7/benzine-fuel-level-checker" target="_blank" rel="noreferrer">View repository <span>↗</span></a></div>
+            </div>
+          </article>
+        </div>
+
+        <div class="projects__note reveal">
+          <span class="projects__note-line"></span>
+          <span>The VPN project is intentionally omitted from this portfolio.</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact section" id="contact" aria-labelledby="contact-title">
+      <div class="container contact__inner">
+        <div class="section-kicker reveal">04 / THE NEXT BUILD</div>
+        <div class="contact__orb" aria-hidden="true"></div>
+        <h2 id="contact-title" class="contact__title reveal">Projects are only<br /><em>the beginning...</em></h2>
+        <p class="contact__copy reveal reveal--delay-1">The next idea starts the moment the last one ships.</p>
+        <div class="contact__actions reveal reveal--delay-2">
+          <a class="button button--primary magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noreferrer">GitHub ↗</a>
+          <a class="button button--ghost magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noreferrer">LinkedIn ↗</a>
+        </div>
+      </div>
+      <footer class="site-footer container"><span>AMIRHOSSEIN MOHAMMADPOUR</span><span>BUILT WITH HTML · CSS · JS</span><a href="#top" class="magnetic">BACK TO TOP ↑</a></footer>
+    </section>
+  </main>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
