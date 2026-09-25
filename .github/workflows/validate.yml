@@ -1,0 +1,56 @@
+name: Validate portfolio
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Validate required files
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f index.html
+          test -f styles.css
+          test -f script.js
+          test -f favicon.svg
+          test -f 404.html
+
+      - name: Ensure VPN project is excluded
+        shell: bash
+        run: |
+          set -euo pipefail
+          if grep -Rni --exclude-dir=.git 'github.com/Amirho33ein7/amirvpn' .; then
+            echo "amirvpn must not be referenced by the portfolio."
+            exit 1
+          fi
+
+      - name: Check required profile links
+        shell: bash
+        run: |
+          set -euo pipefail
+          grep -Fq 'https://github.com/Amirho33ein7' index.html
+          grep -Fq 'https://www.linkedin.com/in/amir-hossein-900009435/' index.html
+
+      - name: Smoke test static site
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 -m http.server 8080 >/tmp/portfolio-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          curl --fail --silent --show-error http://127.0.0.1:8080/ >/tmp/index-response.html
+          grep -Fq 'Amirhossein Mohammadpour' /tmp/index-response.html
+          grep -Fq 'Projects are only' /tmp/index-response.html
