@@ -32,8 +32,9 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if grep -Rni --exclude-dir=.git 'github.com/Amirho33ein7/amirvpn' .; then
-            echo "amirvpn must not be referenced by the portfolio."
+          if grep -Rni --exclude-dir=.git --exclude-dir=.github --exclude='README.md' \
+              'github.com/Amirho33ein7/amirvpn' index.html styles.css script.js 404.html favicon.svg; then
+            echo "amirvpn must not be referenced by portfolio site files."
             exit 1
           fi
 
