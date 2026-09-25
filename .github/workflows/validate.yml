@@ -99,6 +99,7 @@ jobs:
           grep -Fq 'amirbot' /tmp/index-response.html
           grep -Fq 'food-delivery-python' /tmp/index-response.html
           grep -Fq 'benzine-fuel-level-checker' /tmp/index-response.html
+          grep -Fq 'kalorichand' /tmp/index-response.html
           if grep -Fqi 'github.com/Amirho33ein7/amirvpn' /tmp/index-response.html; then
             echo "amirvpn leaked into generated HTML."
             exit 1
