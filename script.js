@@ -8,16 +8,27 @@
   window.addEventListener('load', () => setTimeout(() => loader?.classList.add('is-hidden'), 550), {once:true});
 
   const words = ['Developer','Creator','Software Builder'];
+  const roleNodes = typed
+    ? Array.from(typed.closest('.hero__sub')?.children || [])
+        .filter(el => el !== typed && !el.classList.contains('typed__caret') && !el.classList.contains('hero__separator'))
+    : [];
   let wi=0, ci=0, deleting=false;
+
+  const syncRoleOrder = () => {
+    roleNodes[0] && (roleNodes[0].textContent = words[(wi + 1) % words.length]);
+    roleNodes[1] && (roleNodes[1].textContent = words[(wi + 2) % words.length]);
+  };
+
   const type = () => {
     if (!typed) return;
     const word=words[wi];
     typed.textContent=deleting ? word.slice(0,ci--) : word.slice(0,ci++);
     let delay=deleting?45:85;
     if(!deleting && ci>word.length){delay=1200;deleting=true}
-    else if(deleting && ci<0){deleting=false;wi=(wi+1)%words.length;ci=0;delay=250}
+    else if(deleting && ci<0){deleting=false;wi=(wi+1)%words.length;ci=0;syncRoleOrder();delay=250}
     setTimeout(type,delay);
   };
+  syncRoleOrder();
   setTimeout(type,700);
 
   const revealObserver = new IntersectionObserver((entries) => {
@@ -27,7 +38,7 @@
 
   const updateProgress = () => {
     const max=document.documentElement.scrollHeight-window.innerHeight;
-    progress.style.width=(max>0?(window.scrollY/max)*100:0)+'%';
+    if(progress) progress.style.width=(max>0?(window.scrollY/max)*100:0)+'%';
   };
   window.addEventListener('scroll',updateProgress,{passive:true});
   updateProgress();
