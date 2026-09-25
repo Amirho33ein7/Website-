@@ -9,18 +9,22 @@ Cinematic personal portfolio built with vanilla HTML, CSS and JavaScript.
 - `favicon.svg` — portfolio favicon
 - `404.html` — GitHub Pages fallback
 - `.nojekyll` — ensures the site is served as a static site
-- `.github/workflows/deploy-pages.yml` — GitHub Pages deployment
 - `.github/workflows/validate.yml` — static validation and smoke test
 
 ## GitHub Pages
 
-The site is prepared for GitHub Pages using the official Actions deployment flow.
+The site is prepared for GitHub Pages using the repository's `main` branch as the publishing source.
 
 In GitHub, open:
 
-**Settings → Pages → Build and deployment → Source → GitHub Actions**
+**Settings → Pages → Build and deployment → Source → Deploy from a branch**
 
-After Pages is enabled with **GitHub Actions** as the source, pushes to `main` deploy the portfolio automatically.
+Use:
+
+- Branch: `main`
+- Folder: `/(root)`
+
+The repository keeps the website entry file at the root so GitHub Pages can publish it directly.
 
 Project site URL:
 
