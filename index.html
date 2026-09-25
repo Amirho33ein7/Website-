@@ -1,318 +1,246 @@
 <!doctype html>
-<html lang="en" dir="ltr">
+<html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#05060a">
-  <meta name="description" content="Amirhossein Mohammadpour — Developer, Creator, Software Builder. A cinematic portfolio built from real GitHub projects.">
-  <meta property="og:title" content="Amirhossein Mohammadpour — Portfolio">
-  <meta property="og:description" content="Developer · Creator · Software Builder">
-  <meta property="og:type" content="website">
-  <meta property="og:image" content="favicon.svg">
+  <meta name="theme-color" content="#090a0d">
+  <meta name="description" content="Amirhossein Mohammadpour — Developer, Creator, Software Builder">
+  <meta property="og:title" content="Amirhossein Mohammadpour">
+  <meta property="og:description" content="My path, build by build.">
   <title>Amirhossein Mohammadpour — Portfolio</title>
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="page-loader" id="pageLoader">
-    <div class="loader-mark">AM</div>
-    <div class="loader-meta"><span>PORTFOLIO</span><span>2026</span></div>
-    <div class="loader-track"><span></span></div>
-  </div>
-
+  <div class="boot" id="boot"><span>AM</span><i></i></div>
   <div class="grain" aria-hidden="true"></div>
   <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
   <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
 
-  <header class="nav">
-    <a href="#top" class="brand magnetic" aria-label="Back to top">
-      <span class="brand-mark"><i></i><i></i><i></i></span>
-      <span>AM</span>
+  <header class="topbar">
+    <a class="logo" href="#top" aria-label="خانه">
+      <strong>AM</strong>
+      <span>MOHAMMADPOUR</span>
     </a>
-
-    <nav class="nav-links" aria-label="Primary">
-      <a href="#about">About</a>
-      <a href="#skills">Toolkit</a>
-      <a href="#projects">Projects</a>
-      <a href="#contact">Contact</a>
+    <nav class="topnav">
+      <a href="#story">مسیر</a>
+      <a href="#projects">پروژه‌ها</a>
+      <a href="#numbers">خلاصه</a>
+      <a href="#contact">ارتباط</a>
     </nav>
-
-    <a class="nav-cta magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
-    <button class="menu-toggle" id="menuToggle" type="button" aria-label="Open menu" aria-expanded="false"><span></span><span></span></button>
+    <a class="top-link magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+    <button class="menu-btn" id="menuBtn" type="button" aria-expanded="false" aria-label="باز کردن منو"><span></span><span></span></button>
   </header>
 
-  <div class="mobile-menu" id="mobileMenu" aria-hidden="true">
-    <nav>
-      <a href="#about">01 / About</a>
-      <a href="#skills">02 / Toolkit</a>
-      <a href="#projects">03 / Projects</a>
-      <a href="#contact">04 / Contact</a>
-    </nav>
-    <div class="mobile-menu-foot">
-      <span>AMIRHOSSEIN MOHAMMADPOUR</span>
-      <a href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
-    </div>
+  <div class="mobile-nav" id="mobileNav">
+    <a href="#story">01 / مسیر</a>
+    <a href="#projects">02 / پروژه‌ها</a>
+    <a href="#numbers">03 / خلاصه</a>
+    <a href="#contact">04 / ارتباط</a>
+    <a href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
   </div>
 
-  <div class="scroll-line"><span id="scrollLine"></span></div>
+  <div class="progress-track"><span id="progress"></span></div>
 
   <main id="top">
-    <section class="hero" id="hero">
-      <div class="hero-grid"></div>
-      <div class="hero-glow hero-glow-a" data-parallax="0.10"></div>
-      <div class="hero-glow hero-glow-b" data-parallax="-0.06"></div>
-      <div class="hero-orbit" aria-hidden="true" data-parallax="0.15"><span></span><span></span><span></span></div>
+    <section class="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-glow hero-glow-one" data-speed=".12"></div>
+      <div class="hero-glow hero-glow-two" data-speed="-.08"></div>
 
-      <div class="hero-content shell">
-        <div class="hero-kicker reveal">PERSONAL PORTFOLIO <b>/</b> REAL BUILDS</div>
-
+      <div class="wrap hero-inner">
+        <div class="hero-meta reveal"><span>PERSONAL PORTFOLIO</span><b>/</b><span>REAL GITHUB BUILDS</span></div>
         <h1 class="hero-title">
-          <span class="hero-line reveal">Amirhossein</span>
-          <span class="hero-line hero-line-accent reveal delay-1">Mohammadpour</span>
+          <span class="reveal">Amirhossein</span>
+          <em class="reveal delay-1">Mohammadpour</em>
         </h1>
-
-        <div class="hero-role reveal delay-2">
-          <span id="rolePrimary">Developer</span>
-          <i>/</i>
-          <span id="roleSecondary">Creator</span>
-          <i>/</i>
-          <span id="roleTertiary">Software Builder</span>
+        <p class="hero-role reveal delay-2"><strong>Developer</strong><i>·</i><span>Creator</span><i>·</i><span>Software Builder</span></p>
+        <p class="hero-intro reveal delay-3">مسیر ساخت پروژه‌ها؛ یک تجربه، یک مسئله و یک قدم بعدی — از دل ریپازیتوری‌های واقعی GitHub.</p>
+        <div class="hero-actions reveal delay-4">
+          <a class="pill pill-light magnetic" href="#story">شروع مسیر <b>↓</b></a>
+          <a class="pill pill-dark magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">مشاهده GitHub <b>↗</b></a>
         </div>
-
-        <div class="hero-bottom reveal delay-3">
-          <p>A cinematic archive of software projects, experiments and the path behind them.</p>
-          <a href="#about" class="scroll-cue magnetic"><span>SCROLL TO ENTER</span><b>↓</b></a>
-        </div>
+        <div class="hero-scroll"><span>SCROLL</span><i></i></div>
       </div>
-
-      <div class="hero-corner hero-corner-left">NO. 001 / BUILD LOG</div>
-      <div class="hero-corner hero-corner-right">KARAJ · IRAN · 2026</div>
     </section>
 
-    <section class="chapter about" id="about">
-      <div class="shell">
-        <div class="chapter-head reveal">
-          <span class="chapter-num">01</span>
-          <span class="chapter-label">THE STORY</span>
-          <span class="chapter-rule"></span>
-        </div>
-
-        <div class="about-grid">
-          <div class="about-title-wrap">
-            <p class="eyebrow reveal">NOT A RÉSUMÉ</p>
-            <h2 class="display reveal delay-1">Built from<br><em>curiosity.</em></h2>
-            <div class="about-stamp reveal delay-2"><span>AM</span><small>BUILDER<br>ARCHIVE</small></div>
-          </div>
-
-          <div class="about-copy">
-            <p class="lead reveal">I build software by turning ideas into working projects — then learning from what the build teaches me.</p>
-            <div class="about-columns reveal delay-1">
-              <p>My GitHub profile is a trail of different directions: Python programs, a Telegram bot, an interactive web game, and a Flutter Android application.</p>
-              <p>This site turns those repositories into one visual story — what was built, what each project focuses on, and the technologies visible in the code.</p>
-            </div>
-            <div class="link-row reveal delay-2">
-              <a class="text-link magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
-              <a class="text-link magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noopener noreferrer">LinkedIn <span>↗</span></a>
-            </div>
+    <section class="intro wrap" id="story">
+      <div class="section-cap reveal"><span>01</span><b>مسیر من</b><i></i></div>
+      <div class="intro-grid">
+        <h2 class="editorial reveal">My path,<br><em>build by build.</em></h2>
+        <div class="intro-copy">
+          <p class="lead reveal delay-1">من با ساختن یاد می‌گیرم؛ ایده را تبدیل به پروژه می‌کنم، با محدودیت‌های واقعی روبه‌رو می‌شوم و از هر build چیزی به مسیر بعدی اضافه می‌کنم.</p>
+          <p class="reveal delay-2">آنچه اینجا می‌بینی رزومه‌ای پر از ادعا نیست؛ روایت فشرده‌ای از پروژه‌هایی است که واقعاً در GitHub من وجود دارند. هر ایستگاه یک repository، یک مسئله و یک تکنولوژی قابل مشاهده دارد.</p>
+          <div class="socials reveal delay-3">
+            <a class="text-link magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
+            <a class="text-link magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noopener noreferrer">LinkedIn <span>↗</span></a>
           </div>
         </div>
       </div>
     </section>
 
-    <section class="chapter skills" id="skills">
-      <div class="shell">
-        <div class="chapter-head reveal">
-          <span class="chapter-num">02</span>
-          <span class="chapter-label">VERIFIED TOOLKIT</span>
-          <span class="chapter-rule"></span>
-        </div>
+    <section class="timeline wrap" id="projects">
+      <div class="section-cap reveal"><span>02</span><b>BUILD TIMELINE</b><i></i></div>
 
-        <div class="skills-intro">
-          <div>
-            <p class="eyebrow reveal">OBSERVED IN THE REPOSITORIES</p>
-            <h2 class="display display-sm reveal delay-1">Tools that<br><em>show up in the work.</em></h2>
+      <article class="timeline-item reveal" data-index="01">
+        <div class="timeline-marker"><span>01</span><i></i></div>
+        <div class="timeline-visual visual-green">
+          <div class="visual-label">LOWGUARD</div>
+          <div class="device health-device">
+            <div class="device-top"><span>LOWGUARD</span><span>01</span></div>
+            <div class="device-screen">
+              <small>GLUCOSE LOG</small>
+              <strong>TRACK</strong>
+              <svg viewBox="0 0 420 100" aria-hidden="true"><path d="M0 67H66l19-1 18-44 18 60 22-26 18 11h72l18-1 16-35 18 54 19-20 19 2h92"/></svg>
+              <div class="device-bottom"><span>LOCAL-FIRST</span><span>FLUTTER</span></div>
+            </div>
           </div>
-          <p class="skills-note reveal delay-2">Only technologies that are visible in the portfolio repository or verified project files are included here.</p>
+          <div class="visual-caption">Flutter · Dart · Android</div>
         </div>
+        <div class="timeline-copy">
+          <div class="item-meta"><span>PROJECT 01</span><span>GHANDCHAND</span></div>
+          <h3>نگهبان قند <small>/ LowGuard</small></h3>
+          <p>اپلیکیشن Android با Flutter برای ثبت قند خون، ثبت غذا و فعالیت، تحلیل الگوهای شخصی و یادآوری بررسی قند.</p>
+          <div class="why"><span>WHAT IT DOES</span><b>داده را ثبت می‌کند و تجربه‌ای local-first برای یادآوری و پیگیری می‌سازد.</b></div>
+          <div class="tags"><span>Flutter</span><span>Dart</span><span>sqflite</span><span>Notifications</span></div>
+          <a class="item-link magnetic" href="https://github.com/Amirho33ein7/ghandchand" target="_blank" rel="noopener noreferrer">باز کردن repository <b>↗</b></a>
+        </div>
+      </article>
 
-        <div class="skill-grid">
-          <article class="skill-card reveal magnetic-card"><div class="skill-top"><span>01</span><b>CORE</b></div><h3>Python</h3><p>Used in the food-delivery program and the AmirBot repository.</p><div class="skill-icon">PY</div></article>
-          <article class="skill-card reveal magnetic-card delay-1"><div class="skill-top"><span>02</span><b>MOBILE</b></div><h3>Flutter / Dart</h3><p>Visible in LowGuard, the Flutter Android application.</p><div class="skill-icon">{ }</div></article>
-          <article class="skill-card reveal magnetic-card delay-2"><div class="skill-top"><span>03</span><b>WEB</b></div><h3>HTML / CSS / JS</h3><p>The portfolio itself is built as a static HTML, CSS and JavaScript site.</p><div class="skill-icon">&lt;/&gt;</div></article>
-          <article class="skill-card reveal magnetic-card"><div class="skill-top"><span>04</span><b>DATA</b></div><h3>SQLite</h3><p>LowGuard declares sqflite for local-first data storage.</p><div class="skill-icon">DB</div></article>
-          <article class="skill-card reveal magnetic-card delay-1"><div class="skill-top"><span>05</span><b>ANDROID</b></div><h3>Android</h3><p>LowGuard is documented in its repository as an Android application.</p><div class="skill-icon">AP</div></article>
-          <article class="skill-card reveal magnetic-card delay-2"><div class="skill-top"><span>06</span><b>VERSIONED</b></div><h3>Git & GitHub</h3><p>The projects, source history and publishing workflow live in GitHub repositories.</p><div class="skill-icon">GH</div></article>
+      <article class="timeline-item reverse reveal" data-index="02">
+        <div class="timeline-marker"><span>02</span><i></i></div>
+        <div class="timeline-visual visual-purple">
+          <div class="visual-label">ARIO GAME</div>
+          <div class="game-stage">
+            <div class="star-field"></div>
+            <div class="die die-one">6</div>
+            <div class="coin"><span>+</span></div>
+            <div class="die die-two">3</div>
+            <b>INTERACTIVE WEB</b>
+          </div>
+          <div class="visual-caption">HTML · CSS · JavaScript</div>
         </div>
-      </div>
+        <div class="timeline-copy">
+          <div class="item-meta"><span>PROJECT 02</span><span>ARIO-GAME</span></div>
+          <h3>Ario Game</h3>
+          <p>یک تجربه تعاملی مرورگری که بازی‌ها و تعامل‌های کوچک را داخل یک محیط واحد جمع می‌کند.</p>
+          <div class="why"><span>WHAT IT DOES</span><b>تمرکز پروژه روی تعامل سریع، بازی و تجربه بصری در مرورگر است.</b></div>
+          <div class="tags"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Web</span></div>
+          <a class="item-link magnetic" href="https://github.com/Amirho33ein7/ario-game" target="_blank" rel="noopener noreferrer">باز کردن repository <b>↗</b></a>
+        </div>
+      </article>
+
+      <article class="timeline-item reveal" data-index="03">
+        <div class="timeline-marker"><span>03</span><i></i></div>
+        <div class="timeline-visual visual-blue">
+          <div class="visual-label">AMIRBOT</div>
+          <div class="terminal">
+            <div class="terminal-top"><i></i><i></i><i></i><span>AMIRBOT</span></div>
+            <div class="terminal-body">
+              <p><b>$</b> python bot.py</p>
+              <p class="muted">initializing...</p>
+              <p class="green">✓ pyTelegramBotAPI</p>
+              <p class="blue">✓ aiohttp</p>
+              <p class="orange">✓ cryptography</p>
+              <p><b>$</b> listening...</p>
+            </div>
+          </div>
+          <div class="visual-caption">Python · Telegram</div>
+        </div>
+        <div class="timeline-copy">
+          <div class="item-meta"><span>PROJECT 03</span><span>AMIRBOT</span></div>
+          <h3>AmirBot <small>/ AmirFacts</small></h3>
+          <p>پروژه ربات تلگرام با Python که در requirements آن کتابخانه‌های pyTelegramBotAPI، aiohttp و cryptography دیده می‌شوند.</p>
+          <div class="why"><span>WHAT IT DOES</span><b>منطق Python را به یک رابط پیام‌رسان متصل می‌کند.</b></div>
+          <div class="tags"><span>Python</span><span>pyTelegramBotAPI</span><span>aiohttp</span><span>cryptography</span></div>
+          <a class="item-link magnetic" href="https://github.com/Amirho33ein7/amirbot" target="_blank" rel="noopener noreferrer">باز کردن repository <b>↗</b></a>
+        </div>
+      </article>
+
+      <article class="timeline-item reverse reveal" data-index="04">
+        <div class="timeline-marker"><span>04</span><i></i></div>
+        <div class="timeline-visual visual-warm">
+          <div class="visual-label">FOOD DELIVERY</div>
+          <div class="paper">
+            <span>ORDER</span><strong>FOOD</strong><em>delivery program</em>
+            <i></i>
+            <div><b>ITEMS</b><span>+</span></div>
+            <div><b>TOTAL</b><span>CALC</span></div>
+            <small>PYTHON</small>
+          </div>
+          <div class="visual-caption">Python · Console</div>
+        </div>
+        <div class="timeline-copy">
+          <div class="item-meta"><span>PROJECT 04</span><span>FOOD-DELIVERY-PYTHON</span></div>
+          <h3>Food Delivery Python</h3>
+          <p>برنامه ساده Python برای سناریوی سفارش غذا؛ README خود repository نیز آن را یک food delivery program ساده معرفی می‌کند.</p>
+          <div class="why"><span>WHAT IT DOES</span><b>یک جریان سفارش را در قالب منطق خط فرمان مدل می‌کند.</b></div>
+          <div class="tags"><span>Python</span><span>Console</span><span>Logic</span></div>
+          <a class="item-link magnetic" href="https://github.com/Amirho33ein7/food-delivery-python" target="_blank" rel="noopener noreferrer">باز کردن repository <b>↗</b></a>
+        </div>
+      </article>
+
+      <article class="timeline-item reveal" data-index="05">
+        <div class="timeline-marker"><span>05</span><i></i></div>
+        <div class="timeline-visual visual-cyan">
+          <div class="visual-label">FUEL CHECKER</div>
+          <div class="fuel-gauge">
+            <div class="arc"></div><div class="needle"></div><div class="hub"></div>
+            <span>0</span><span>50</span><span>100</span>
+          </div>
+          <div class="fuel-name">BENZINE FUEL LEVEL CHECKER</div>
+          <div class="visual-caption">Python · Utility</div>
+        </div>
+        <div class="timeline-copy">
+          <div class="item-meta"><span>PROJECT 05</span><span>BENZINE-FUEL-LEVEL-CHECKER</span></div>
+          <h3>Benzine Fuel Level Checker</h3>
+          <p>یک ابزار Python با تمرکز بر بررسی سطح سوخت؛ نام repository نیز دقیقاً همین مسئله را مشخص می‌کند.</p>
+          <div class="why"><span>WHAT IT DOES</span><b>یک مسئله مشخص روزمره را به یک utility کوچک تبدیل می‌کند.</b></div>
+          <div class="tags"><span>Python</span><span>Utility</span><span>Logic</span></div>
+          <a class="item-link magnetic" href="https://github.com/Amirho33ein7/benzine-fuel-level-checker" target="_blank" rel="noopener noreferrer">باز کردن repository <b>↗</b></a>
+        </div>
+      </article>
+
+      <aside class="excluded reveal">
+        <span>EXCLUDED BY REQUEST</span>
+        <strong>amirvpn</strong>
+        <p>این repository عمداً در Portfolio نمایش داده نمی‌شود.</p>
+      </aside>
     </section>
 
-    <section class="chapter projects" id="projects">
-      <div class="shell">
-        <div class="chapter-head reveal">
-          <span class="chapter-num">03</span>
-          <span class="chapter-label">SELECTED WORK</span>
-          <span class="chapter-rule"></span>
-        </div>
-
-        <div class="projects-intro">
-          <div>
-            <p class="eyebrow reveal">THE BUILD LOG</p>
-            <h2 class="display reveal delay-1">One project.<br><em>One scene.</em></h2>
-          </div>
-          <p class="projects-note reveal delay-2">Scroll slowly. Each build takes over the screen before the next one arrives.</p>
-        </div>
-
-        <div class="project-track">
-          <article class="project-scene scene-health" data-project="01">
-            <div class="project-card-shell">
-              <div class="project-card">
-                <div class="project-visual">
-                  <div class="visual-grid"></div>
-                  <div class="visual-orb health-orb"></div>
-                  <div class="health-ui">
-                    <div class="health-ui-top"><span>LOWGUARD</span><span>01 / 05</span></div>
-                    <div class="health-pulse"><span></span><svg viewBox="0 0 420 120" aria-hidden="true"><path d="M0 78H70L92 77L110 32L128 98L149 62L171 78H233L251 77L269 42L285 94L303 67L321 78H420"/></svg></div>
-                    <div class="health-ui-row"><b>GLUCOSE LOG</b><span>LOCAL-FIRST</span></div>
-                  </div>
-                  <div class="visual-tag">FLUTTER · DART · ANDROID</div>
-                </div>
-                <div class="project-content">
-                  <div class="project-meta"><span>01 / HEALTH-TECH</span><span>GHANDCHAND</span></div>
-                  <h3>نگهبان قند <small>/ LowGuard</small></h3>
-                  <p class="project-lead">یک اپلیکیشن Android با Flutter برای ثبت قند خون، ثبت غذا و فعالیت، تحلیل الگوهای شخصی و یادآوری بررسی قند.</p>
-                  <div class="story-line"><span>FOCUS</span><b>ثبت داده + یادآوری + تجربه local-first</b></div>
-                  <div class="tech-row"><span>Flutter</span><span>Dart</span><span>sqflite</span><span>Notifications</span></div>
-                  <a class="project-link magnetic" href="https://github.com/Amirho33ein7/ghandchand" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY <b>↗</b></a>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-scene scene-game" data-project="02">
-            <div class="project-card-shell">
-              <div class="project-card">
-                <div class="project-visual">
-                  <div class="game-stars"></div>
-                  <div class="game-stage">
-                    <div class="die die-a">6</div>
-                    <div class="coin"><span>+</span></div>
-                    <div class="die die-b">3</div>
-                    <div class="game-label">ARIO GAME</div>
-                  </div>
-                  <div class="visual-tag">HTML · CSS · JAVASCRIPT</div>
-                </div>
-                <div class="project-content">
-                  <div class="project-meta"><span>02 / INTERACTIVE WEB</span><span>ARIO-GAME</span></div>
-                  <h3>Ario Game</h3>
-                  <p class="project-lead">یک هاب بازی مرورگری تعاملی که تجربه‌های کوچک و سریع را در یک محیط واحد جمع می‌کند.</p>
-                  <div class="story-line"><span>FOCUS</span><b>تعامل، انیمیشن، بازی‌های کوچک و تجربه سریع</b></div>
-                  <div class="tech-row"><span>HTML</span><span>CSS</span><span>JavaScript</span><span>Web</span></div>
-                  <a class="project-link magnetic" href="https://github.com/Amirho33ein7/ario-game" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY <b>↗</b></a>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-scene scene-bot" data-project="03">
-            <div class="project-card-shell">
-              <div class="project-card">
-                <div class="project-visual">
-                  <div class="terminal-window">
-                    <div class="terminal-bar"><span></span><span></span><span></span><b>AMIRBOT</b></div>
-                    <div class="terminal-body"><p><i>$</i> python bot.py</p><p class="muted-line">initializing polling...</p><p class="green-line">✓ pyTelegramBotAPI</p><p class="blue-line">✓ aiohttp</p><p class="warm-line">✓ cryptography</p><p><i>$</i> listening...</p></div>
-                  </div>
-                  <div class="visual-tag">PYTHON · TELEGRAM</div>
-                </div>
-                <div class="project-content">
-                  <div class="project-meta"><span>03 / AUTOMATION</span><span>AMIRBOT</span></div>
-                  <h3>AmirBot <small>/ AmirFacts</small></h3>
-                  <p class="project-lead">پروژه ربات تلگرام با Python که در requirements خود از pyTelegramBotAPI، aiohttp و cryptography استفاده می‌کند.</p>
-                  <div class="story-line"><span>FOCUS</span><b>اتصال منطق Python به یک رابط پیام‌رسان</b></div>
-                  <div class="tech-row"><span>Python</span><span>pyTelegramBotAPI</span><span>aiohttp</span><span>cryptography</span></div>
-                  <a class="project-link magnetic" href="https://github.com/Amirho33ein7/amirbot" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY <b>↗</b></a>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-scene scene-food" data-project="04">
-            <div class="project-card-shell">
-              <div class="project-card">
-                <div class="project-visual">
-                  <div class="receipt">
-                    <span>ORDER</span><strong>FOOD</strong><em>delivery</em><div class="receipt-line"></div><div class="receipt-row"><b>ITEMS</b><span>+</span></div><div class="receipt-row"><b>TOTAL</b><span>CALC</span></div><div class="receipt-stamp">PYTHON</div>
-                  </div>
-                  <div class="visual-tag">PYTHON · CONSOLE</div>
-                </div>
-                <div class="project-content">
-                  <div class="project-meta"><span>04 / LOGIC</span><span>FOOD-DELIVERY-PYTHON</span></div>
-                  <h3>Food Delivery Python</h3>
-                  <p class="project-lead">یک برنامه ساده Python برای سناریوی سفارش غذا؛ پروژه در README به‌عنوان یک برنامه food delivery ساده معرفی شده است.</p>
-                  <div class="story-line"><span>FOCUS</span><b>مدل‌سازی یک جریان سفارش در محیط خط فرمان</b></div>
-                  <div class="tech-row"><span>Python</span><span>Console</span><span>Logic</span></div>
-                  <a class="project-link magnetic" href="https://github.com/Amirho33ein7/food-delivery-python" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY <b>↗</b></a>
-                </div>
-              </div>
-            </div>
-          </article>
-
-          <article class="project-scene scene-fuel" data-project="05">
-            <div class="project-card-shell">
-              <div class="project-card">
-                <div class="project-visual">
-                  <div class="gauge">
-                    <div class="gauge-arc"></div><div class="gauge-needle"></div><div class="gauge-center"></div>
-                    <span class="gauge-zero">0</span><span class="gauge-half">50</span><span class="gauge-max">100</span>
-                  </div>
-                  <div class="fuel-title">FUEL LEVEL CHECKER</div>
-                  <div class="visual-tag">PYTHON · LOGIC</div>
-                </div>
-                <div class="project-content">
-                  <div class="project-meta"><span>05 / UTILITY</span><span>BENZINE-FUEL-LEVEL-CHECKER</span></div>
-                  <h3>Benzine Fuel Level Checker</h3>
-                  <p class="project-lead">ابزاری با تمرکز روی بررسی سطح سوخت؛ خود نام repository نشان می‌دهد که مسئله اصلی، سنجش وضعیت fuel level است.</p>
-                  <div class="story-line"><span>FOCUS</span><b>تبدیل یک مسئله روزمره به یک ابزار کوچک</b></div>
-                  <div class="tech-row"><span>Python</span><span>Utility</span><span>Logic</span></div>
-                  <a class="project-link magnetic" href="https://github.com/Amirho33ein7/benzine-fuel-level-checker" target="_blank" rel="noopener noreferrer">OPEN REPOSITORY <b>↗</b></a>
-                </div>
-              </div>
-            </div>
-          </article>
-        </div>
-
-        <div class="project-exclusion reveal">
-          <span>EXCLUDED BY REQUEST</span>
-          <strong>amirvpn</strong>
-          <small>The VPN repository is intentionally not part of this portfolio.</small>
-        </div>
+    <section class="numbers wrap" id="numbers">
+      <div class="section-cap reveal"><span>03</span><b>THE PATH IN NUMBERS</b><i></i></div>
+      <div class="numbers-head">
+        <h2 class="editorial reveal">The whole path<br><em>in a few builds.</em></h2>
+        <p class="reveal delay-1">این اعداد فقط از پروژه‌های واقعی موجود در GitHub این Portfolio جمع شده‌اند.</p>
+      </div>
+      <div class="stat-grid">
+        <div class="stat reveal"><strong data-count="5">0</strong><span>پروژه نمایش‌داده‌شده</span></div>
+        <div class="stat reveal delay-1"><strong data-count="2">0</strong><span>پروژه Python کاربردی</span></div>
+        <div class="stat reveal delay-2"><strong data-count="1">0</strong><span>اپلیکیشن Android با Flutter</span></div>
+        <div class="stat reveal delay-3"><strong data-count="1">0</strong><span>پروژه تعاملی Web</span></div>
+        <div class="stat reveal"><strong data-count="1">0</strong><span>ربات Telegram</span></div>
       </div>
     </section>
 
     <section class="contact" id="contact">
-      <div class="contact-field" aria-hidden="true"></div>
-      <div class="shell contact-inner">
-        <div class="chapter-head reveal">
-          <span class="chapter-num">04</span>
-          <span class="chapter-label">THE NEXT BUILD</span>
-          <span class="chapter-rule"></span>
-        </div>
-
-        <div class="contact-center">
-          <p class="eyebrow reveal">END OF THIS CHAPTER</p>
+      <div class="wrap">
+        <div class="section-cap reveal"><span>04</span><b>ادامه دارد</b><i></i></div>
+        <div class="contact-inner">
+          <p class="eyebrow reveal">THE NEXT BUILD</p>
           <h2 class="contact-title reveal delay-1">Projects are only<br><em>the beginning...</em></h2>
-          <p class="contact-copy reveal delay-2">The story continues where the next repository begins.</p>
+          <p class="contact-copy reveal delay-2">هر repository جدید، یک فصل تازه از این مسیر است.</p>
           <div class="contact-actions reveal delay-3">
-            <a class="big-button magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub <span>↗</span></a>
-            <a class="big-button big-button-ghost magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noopener noreferrer">LinkedIn <span>↗</span></a>
+            <a class="pill pill-light magnetic" href="https://github.com/Amirho33ein7" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+            <a class="pill pill-dark magnetic" href="https://www.linkedin.com/in/amir-hossein-900009435/" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a>
           </div>
         </div>
-
         <footer class="footer">
           <span>AMIRHOSSEIN MOHAMMADPOUR</span>
-          <span>BUILT WITH HTML · CSS · JS</span>
+          <span>HTML · CSS · JAVASCRIPT</span>
           <a href="#top" class="magnetic">BACK TO TOP ↑</a>
         </footer>
       </div>
