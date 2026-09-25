@@ -3,20 +3,44 @@
 Cinematic personal portfolio built with vanilla HTML, CSS and JavaScript.
 
 ## Structure
-- `index.html` — portfolio page
+- `index.html` — cinematic portfolio page
 - `styles.css` — responsive premium visual system
-- `script.js` — scroll reveal, pointer interactions, typing and motion
-- `favicon.svg` — favicon
+- `script.js` — scroll scenes, parallax, 3D pointer interactions and motion
+- `favicon.svg` — portfolio favicon
 - `404.html` — GitHub Pages fallback
+- `.nojekyll` — ensures the site is served as a static site
+- `.github/workflows/deploy-pages.yml` — GitHub Pages deployment
+- `.github/workflows/validate.yml` — static validation and smoke test
 
 ## GitHub Pages
-The site is a static site and is ready to publish from the `main` branch.
 
-In GitHub, open **Settings → Pages**, choose **Deploy from a branch**, select **main** and **/(root)**, then save.
+The site is prepared for GitHub Pages using the official Actions deployment flow.
 
-The repository also contains a lightweight GitHub Actions validation workflow that checks the required site files. It does not require GitHub Pages to be enabled.
+In GitHub, open:
 
-The VPN repository is intentionally excluded from the portfolio.
+**Settings → Pages → Build and deployment → Source → GitHub Actions**
 
-## Project facts
-Portfolio project names, repository links and technology references were taken from the GitHub repositories inspected while building this site. No extra project was invented.
+After Pages is enabled with **GitHub Actions** as the source, pushes to `main` deploy the portfolio automatically.
+
+Project site URL:
+
+`https://amirho33ein7.github.io/Website-/`
+
+## Portfolio scope
+
+The portfolio is built from the user's real GitHub repositories inspected during development.
+
+Included projects:
+- `ghandchand`
+- `ario-game`
+- `amirbot`
+- `food-delivery-python`
+- `benzine-fuel-level-checker`
+
+The `amirvpn` repository is intentionally excluded.
+
+## Verification
+
+The validation workflow checks required files, required profile links, the absence of the excluded VPN repository URL, and a local static-site smoke test.
+
+No project data is invented in the portfolio.
