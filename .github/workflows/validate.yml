@@ -26,6 +26,7 @@ jobs:
           test -f script.js
           test -f favicon.svg
           test -f 404.html
+          test -f .nojekyll
 
       - name: Ensure VPN project is excluded
         shell: bash
@@ -43,6 +44,44 @@ jobs:
           grep -Fq 'https://github.com/Amirho33ein7' index.html
           grep -Fq 'https://www.linkedin.com/in/amir-hossein-900009435/' index.html
 
+      - name: Validate local asset references
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from html.parser import HTMLParser
+          from pathlib import Path
+          from urllib.parse import urlparse
+
+          root = Path(".")
+          html = (root / "index.html").read_text(encoding="utf-8")
+
+          class Parser(HTMLParser):
+              def __init__(self):
+                  super().__init__()
+                  self.refs = []
+              def handle_starttag(self, tag, attrs):
+                  attrs = dict(attrs)
+                  for key in ("src", "href"):
+                      value = attrs.get(key)
+                      if not value or value.startswith(("#", "http://", "https://", "mailto:", "data:")):
+                          continue
+                      self.refs.append(value.split("?", 1)[0].split("#", 1)[0])
+
+          parser = Parser()
+          parser.feed(html)
+
+          missing = []
+          for ref in sorted(set(parser.refs)):
+              candidate = (root / ref.lstrip("/")).resolve()
+              if not candidate.exists():
+                  missing.append(ref)
+
+          if missing:
+              raise SystemExit("Missing local references: " + ", ".join(missing))
+          print("All local HTML references resolve.")
+          PY
+
       - name: Smoke test static site
         shell: bash
         run: |
@@ -52,5 +91,14 @@ jobs:
           trap 'kill $SERVER_PID' EXIT
           sleep 2
           curl --fail --silent --show-error http://127.0.0.1:8080/ >/tmp/index-response.html
-          grep -Fq 'Amirhossein Mohammadpour' /tmp/index-response.html
+          grep -Fq 'Amirhossein' /tmp/index-response.html
           grep -Fq 'Projects are only' /tmp/index-response.html
+          grep -Fq 'ghandchand' /tmp/index-response.html
+          grep -Fq 'ario-game' /tmp/index-response.html
+          grep -Fq 'amirbot' /tmp/index-response.html
+          grep -Fq 'food-delivery-python' /tmp/index-response.html
+          grep -Fq 'benzine-fuel-level-checker' /tmp/index-response.html
+          if grep -Fqi 'github.com/Amirho33ein7/amirvpn' /tmp/index-response.html; then
+            echo "amirvpn leaked into generated HTML."
+            exit 1
+          fi
