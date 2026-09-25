@@ -49,7 +49,7 @@ linear-gradient(180deg,#0a0b0f,#090a0d)}.hero-bg:after{content:"";position:absol
  .contact-inner{min-height:70vh}.footer{flex-direction:column;align-items:flex-start}
 }
 @media (max-width:560px){
- .wrap{width:calc(100% - 28px)}.logo span{display:none}.hero-title{font-size:clamp(3rem,13vw,5.5rem);letter-spacing:-.055em;max-width:100%;overflow:visible;word-break:normal}.hero-intro{font-size:14px}.hero-role{font-size:12px}
+ .wrap{width:calc(100% - 28px)}.logo span{display:none}.hero-title{font-size:clamp(3rem,13vw,5.5rem);letter-spacing:-.055em;max-width:100%;overflow:visible;word-break:normal}.hero-title em{font-size:clamp(2.35rem,11.2vw,5.5rem);letter-spacing:-.065em;white-space:nowrap}.hero-intro{font-size:14px}.hero-role{font-size:12px}
  .intro{padding:90px 0}.editorial{font-size:clamp(3.1rem,15vw,5.2rem)}.timeline-item{padding-bottom:75px}.timeline-visual{min-height:330px}.timeline-copy{padding-left:42px}.item-meta{flex-direction:column;gap:6px}.why{grid-template-columns:1fr;gap:5px}.tags span{font-size:7px}
  .device{width:230px;height:360px;border-radius:28px}.device-screen{height:315px;padding:23px 18px}.device-screen strong{font-size:31px}.device-top{padding:8px 12px}.game-stage{transform:scale(.83)}.terminal{width:84%}.terminal-body{padding:22px;font-size:9px}.paper{width:195px;transform:translate(-50%,-50%) rotate(5deg) scale(.9)}.fuel-gauge{transform:translate(-50%,-50%) scale(.84)}.fuel-name{font-size:7px}
  .numbers{padding-top:20px}.stat-grid{grid-template-columns:1fr 1fr}.stat strong{font-size:3.5rem}.contact-title{font-size:clamp(3.35rem,15vw,5.9rem)}
