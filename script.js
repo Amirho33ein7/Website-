@@ -1,231 +1,150 @@
 (() => {
   'use strict';
 
-  const $ = (selector, root = document) => root.querySelector(selector);
-  const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
-  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const $ = (s, r = document) => r.querySelector(s);
+  const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const loader = $('#pageLoader');
+  const boot = $('#boot');
   window.addEventListener('load', () => {
-    window.setTimeout(() => loader?.classList.add('hide'), reduceMotion ? 0 : 500);
+    window.setTimeout(() => boot?.classList.add('hide'), reduced ? 0 : 450);
   }, {once:true});
 
-  const scrollLine = $('#scrollLine');
-  const updateScrollProgress = () => {
+  const progress = $('#progress');
+  const onScroll = () => {
     const max = document.documentElement.scrollHeight - window.innerHeight;
-    if (scrollLine) {
-      scrollLine.style.width = (max > 0 ? Math.min(100, (window.scrollY / max) * 100) : 0) + '%';
-    }
+    if (progress) progress.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%';
   };
-  window.addEventListener('scroll', updateScrollProgress, {passive:true});
-  updateScrollProgress();
+  window.addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
 
-  const menuToggle = $('#menuToggle');
-  const mobileMenu = $('#mobileMenu');
-
-  const setMenu = (open) => {
-    menuToggle?.setAttribute('aria-expanded', String(open));
-    mobileMenu?.classList.toggle('open', open);
-    mobileMenu?.setAttribute('aria-hidden', String(!open));
+  const menuBtn = $('#menuBtn');
+  const mobileNav = $('#mobileNav');
+  const toggleMenu = (open) => {
+    menuBtn?.setAttribute('aria-expanded', String(open));
+    mobileNav?.classList.toggle('open', open);
     document.body.classList.toggle('menu-open', open);
   };
+  menuBtn?.addEventListener('click', () => toggleMenu(!mobileNav.classList.contains('open')));
+  $$('.mobile-nav a').forEach(a => a.addEventListener('click', () => toggleMenu(false)));
 
-  menuToggle?.addEventListener('click', () => setMenu(!mobileMenu.classList.contains('open')));
-  $$('.mobile-menu a').forEach(link => link.addEventListener('click', () => setMenu(false)));
-
-  const revealObserver = new IntersectionObserver((entries) => {
+  const reveal = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
-        revealObserver.unobserve(entry.target);
+        reveal.unobserve(entry.target);
       }
     });
-  }, {threshold:0.12, rootMargin:'0px 0px -5% 0px'});
-  $$('.reveal').forEach(el => revealObserver.observe(el));
+  }, {threshold:.12, rootMargin:'0px 0px -4% 0px'});
+  $$('.reveal').forEach(el => reveal.observe(el));
 
-  const scenes = $$('.project-scene');
-  const sceneObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      entry.target.classList.toggle('is-active', entry.isIntersecting && entry.intersectionRatio > .22);
-    });
-  }, {threshold:[0,.22,.48,.72]});
-  scenes.forEach(scene => sceneObserver.observe(scene));
-
-  if (!reduceMotion) {
-    const parallaxNodes = $$('[data-parallax]');
-    let ticking = false;
-    const applyParallax = () => {
-      const y = window.scrollY;
-      parallaxNodes.forEach(el => {
-        const speed = Number(el.dataset.parallax || 0);
-        el.style.transform = 'translate3d(0,' + (y * speed * -0.18) + 'px,0)';
-      });
-      ticking = false;
-    };
-    window.addEventListener('scroll', () => {
-      if (!ticking) {
-        window.requestAnimationFrame(applyParallax);
-        ticking = true;
-      }
-    }, {passive:true});
-  }
-
-  const roles = ['Developer','Creator','Software Builder'];
-  const roleEls = [$('#rolePrimary'), $('#roleSecondary'), $('#roleTertiary')].filter(Boolean);
-  let roleIndex = 0;
-  let typingTimer = null;
-
-  const updateRoles = () => {
-    roleEls.forEach((el, index) => {
-      const role = roles[(roleIndex + index) % roles.length];
-      el.textContent = role;
-      el.style.opacity = index === 0 ? '1' : '.72';
-    });
-  };
-
-  const typeRole = () => {
-    if (!roleEls[0] || reduceMotion) return;
-    const target = roles[roleIndex];
-    let i = 0;
-    const typeForward = () => {
-      roleEls[0].textContent = target.slice(0, i++);
-      if (i <= target.length) {
-        typingTimer = window.setTimeout(typeForward, 62);
-      } else {
-        typingTimer = window.setTimeout(() => {
-          roleIndex = (roleIndex + 1) % roles.length;
-          updateRoles();
-          typeRole();
-        }, 1150);
-      }
-    };
-    typeForward();
-  };
-  updateRoles();
-  if (!reduceMotion) {
-    window.setTimeout(typeRole, 850);
-  }
-
-  const finePointer = window.matchMedia('(pointer:fine)').matches;
+  const fine = window.matchMedia('(pointer:fine)').matches;
   const cursorDot = $('#cursorDot');
   const cursorRing = $('#cursorRing');
 
-  if (finePointer && cursorDot && cursorRing && !reduceMotion) {
+  if (fine && !reduced && cursorDot && cursorRing) {
     document.body.classList.add('cursor-ready');
-    let x = window.innerWidth / 2;
-    let y = window.innerHeight / 2;
-    let rx = x;
-    let ry = y;
-
-    window.addEventListener('pointermove', (event) => {
-      x = event.clientX;
-      y = event.clientY;
+    let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;
+    addEventListener('pointermove', e => {
+      x = e.clientX; y = e.clientY;
       cursorDot.style.left = x + 'px';
       cursorDot.style.top = y + 'px';
     }, {passive:true});
 
     const loop = () => {
-      rx += (x - rx) * .16;
-      ry += (y - ry) * .16;
+      rx += (x - rx) * .17;
+      ry += (y - ry) * .17;
       cursorRing.style.left = rx + 'px';
       cursorRing.style.top = ry + 'px';
-      window.requestAnimationFrame(loop);
+      requestAnimationFrame(loop);
     };
     loop();
 
-    const interactive = $$('a,button,.magnetic-card');
-    interactive.forEach(el => {
+    $$('a,button').forEach(el => {
       el.addEventListener('mouseenter', () => {
-        cursorRing.style.width = '52px';
-        cursorRing.style.height = '52px';
-        cursorRing.style.borderColor = 'rgba(145,247,199,.82)';
+        cursorRing.style.width = '50px';
+        cursorRing.style.height = '50px';
+        cursorRing.style.borderColor = 'rgba(154,240,191,.8)';
       });
       el.addEventListener('mouseleave', () => {
-        cursorRing.style.width = '30px';
-        cursorRing.style.height = '30px';
-        cursorRing.style.borderColor = 'rgba(145,247,199,.45)';
+        cursorRing.style.width = '29px';
+        cursorRing.style.height = '29px';
+        cursorRing.style.borderColor = 'rgba(154,240,191,.4)';
       });
     });
   }
 
-  if (finePointer && !reduceMotion) {
+  if (fine && !reduced) {
     $$('.magnetic').forEach(el => {
-      el.addEventListener('pointermove', event => {
-        const rect = el.getBoundingClientRect();
-        const dx = (event.clientX - (rect.left + rect.width / 2)) * .10;
-        const dy = (event.clientY - (rect.top + rect.height / 2)) * .10;
+      el.addEventListener('pointermove', e => {
+        const r = el.getBoundingClientRect();
+        const dx = (e.clientX - (r.left + r.width / 2)) * .08;
+        const dy = (e.clientY - (r.top + r.height / 2)) * .08;
         el.style.transform = 'translate3d(' + dx + 'px,' + dy + 'px,0)';
       });
-      el.addEventListener('pointerleave', () => {
-        el.style.transform = '';
+      el.addEventListener('pointerleave', () => { el.style.transform = ''; });
+    });
+
+    const parallax = $$('[data-speed]');
+    let ticking = false;
+    const updateParallax = () => {
+      const y = window.scrollY;
+      parallax.forEach(el => {
+        const speed = Number(el.dataset.speed || 0);
+        el.style.transform = 'translate3d(0,' + (y * speed * -.16) + 'px,0)';
       });
-    });
-
-    $$('.magnetic-card').forEach(card => {
-      card.addEventListener('pointermove', event => {
-        const rect = card.getBoundingClientRect();
-        const px = (event.clientX - rect.left) / rect.width - .5;
-        const py = (event.clientY - rect.top) / rect.height - .5;
-        card.style.transform = 'perspective(1000px) rotateX(' + (-py * 3) + 'deg) rotateY(' + (px * 4) + 'deg) translateY(-5px)';
-      });
-      card.addEventListener('pointerleave', () => {
-        card.style.transform = '';
-      });
-    });
-  }
-
-  const smoothLinks = $$('a[href^="#"]');
-  smoothLinks.forEach(link => {
-    link.addEventListener('click', event => {
-      const target = $(link.getAttribute('href'));
-      if (!target) return;
-      event.preventDefault();
-      target.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
-    });
-  });
-
-  const hero = $('#hero');
-  if (hero && finePointer && !reduceMotion) {
-    hero.addEventListener('pointermove', event => {
-      const rect = hero.getBoundingClientRect();
-      const x = (event.clientX - rect.left) / rect.width - .5;
-      const y = (event.clientY - rect.top) / rect.height - .5;
-      const orbit = $('.hero-orbit');
-      if (orbit) {
-        orbit.style.transform = 'translate3d(' + (x * 16) + 'px,' + (y * 10) + 'px,0) rotate(-16deg)';
-      }
-    });
-  }
-
-  const cards = $$('.project-card');
-  const updateProjectDepth = () => {
-    const vh = window.innerHeight;
-    cards.forEach(card => {
-      const rect = card.getBoundingClientRect();
-      const center = rect.top + rect.height / 2;
-      const distance = Math.abs(center - vh / 2) / vh;
-      const scene = card.closest('.project-scene');
-      if (!scene) return;
-      const active = scene.classList.contains('is-active');
-      if (!active || reduceMotion) return;
-      const scale = Math.max(.96, 1 - Math.min(.035, distance * .018));
-      card.style.setProperty('--depth-scale', scale.toFixed(3));
-    });
-  };
-
-  if (!reduceMotion) {
-    let depthTick = false;
+      ticking = false;
+    };
     window.addEventListener('scroll', () => {
-      if (depthTick) return;
-      depthTick = true;
-      window.requestAnimationFrame(() => {
-        updateProjectDepth();
-        depthTick = false;
-      });
+      if (!ticking) {
+        requestAnimationFrame(updateParallax);
+        ticking = true;
+      }
     }, {passive:true});
   }
 
-  window.addEventListener('beforeunload', () => {
-    if (typingTimer) window.clearTimeout(typingTimer);
+  const anchors = $$('a[href^="#"]');
+  anchors.forEach(a => {
+    a.addEventListener('click', e => {
+      const target = $(a.getAttribute('href'));
+      if (!target) return;
+      e.preventDefault();
+      target.scrollIntoView({behavior: reduced ? 'auto' : 'smooth', block:'start'});
+    });
+  });
+
+  const stats = $$('[data-count]');
+  const seenStats = new WeakSet();
+  const statsObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting || seenStats.has(entry.target)) return;
+      seenStats.add(entry.target);
+      const node = entry.target;
+      const target = Number(node.dataset.count);
+      if (reduced) {
+        node.textContent = String(target);
+        return;
+      }
+      const start = performance.now();
+      const duration = 900;
+      const tick = now => {
+        const p = Math.min(1, (now - start) / duration);
+        const eased = 1 - Math.pow(1 - p, 3);
+        node.textContent = String(Math.round(target * eased));
+        if (p < 1) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+  }, {threshold:.65});
+  stats.forEach(s => statsObserver.observe(s));
+
+  const timelineItems = $$('.timeline-item');
+  const timelineObserver = new IntersectionObserver(entries => {
+    entries.forEach(entry => entry.target.classList.toggle('in-view', entry.isIntersecting));
+  }, {threshold:.18});
+  timelineItems.forEach(item => timelineObserver.observe(item));
+
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') toggleMenu(false);
   });
 })();
