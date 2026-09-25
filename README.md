@@ -40,6 +40,7 @@ Included projects:
 - `amirbot`
 - `food-delivery-python`
 - `benzine-fuel-level-checker`
+- `kalorichand`
 
 The `amirvpn` repository is intentionally excluded.
 
