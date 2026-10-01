@@ -273,24 +273,18 @@ body {
   }
 }
 
-/* Keep the original compact tracking and reserve a small right-side glyph safety margin. */
-.hero-title {
-  letter-spacing: -.065em;
-}
-
-.hero-title em {
-  letter-spacing: -.065em;
-  padding-inline-end: .09em;
-}
-
-@media (max-width: 560px) {
+/* Prevent the hero name from being clipped at common desktop widths. */
+@media (min-width: 900px) {
   .hero-title {
-    letter-spacing: -.055em;
+    font-size: clamp(3.7rem, 9.5vw, 9rem);
+    letter-spacing: -.065em;
   }
 
   .hero-title em {
-    letter-spacing: -.045em;
-    padding-inline-end: .08em;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    letter-spacing: -.065em;
+    padding-inline-end: .09em;
   }
 }
-
