@@ -18,6 +18,90 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
+  // Optional background soundtrack: place the chosen audio file at /music.mp3.
+  // Music starts after the visitor's first interaction and never restarts on later scrolls.
+  const backgroundMusic = $('#backgroundMusic');
+  const musicToggle = $('#musicToggle');
+  const musicIcon = $('.music-toggle-icon', musicToggle || document);
+
+  if (backgroundMusic && musicToggle && musicIcon) {
+    let musicReady = false;
+    let musicHasStarted = false;
+    let musicPausedByUser = false;
+    let hasInteracted = false;
+    let playPending = false;
+
+    backgroundMusic.volume = 0.24;
+    backgroundMusic.loop = true;
+
+    const syncMusicToggle = () => {
+      const playing = !backgroundMusic.paused;
+      musicIcon.textContent = playing ? 'Ⅱ' : '♫';
+      musicToggle.classList.toggle('is-playing', playing);
+      musicToggle.setAttribute('aria-pressed', String(playing));
+      musicToggle.setAttribute('aria-label', playing ? 'قطع موسیقی' : 'پخش موسیقی');
+      musicToggle.title = playing ? 'قطع موسیقی' : 'پخش موسیقی';
+    };
+
+    const playBackgroundMusic = async () => {
+      if (!musicReady || musicPausedByUser || playPending || !backgroundMusic.paused) return;
+      playPending = true;
+      try {
+        await backgroundMusic.play();
+        musicHasStarted = true;
+      } catch (_) {
+        // Some browsers require a clearer user gesture; the next interaction retries.
+      } finally {
+        playPending = false;
+        syncMusicToggle();
+      }
+    };
+
+    const onFirstInteraction = () => {
+      hasInteracted = true;
+      if (!musicHasStarted && !musicPausedByUser) void playBackgroundMusic();
+    };
+
+    ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll', 'click'].forEach(type => {
+      window.addEventListener(type, onFirstInteraction, { passive: true });
+    });
+
+    musicToggle.addEventListener('click', async () => {
+      if (!musicReady) return;
+      if (!backgroundMusic.paused) {
+        musicPausedByUser = true;
+        backgroundMusic.pause();
+        syncMusicToggle();
+        return;
+      }
+      musicPausedByUser = false;
+      await playBackgroundMusic();
+    });
+
+    backgroundMusic.addEventListener('play', syncMusicToggle);
+    backgroundMusic.addEventListener('pause', syncMusicToggle);
+    backgroundMusic.addEventListener('error', () => {
+      musicReady = false;
+      musicToggle.classList.remove('is-ready', 'is-playing');
+      musicToggle.hidden = true;
+    });
+
+    // Check for the soundtrack first, so the control stays hidden until music.mp3 exists.
+    const musicUrl = new URL('music.mp3', document.baseURI);
+    fetch(musicUrl.href, { method: 'HEAD', cache: 'no-store' })
+      .then(response => {
+        if (!response.ok) return;
+        backgroundMusic.src = musicUrl.href;
+        musicReady = true;
+        musicToggle.hidden = false;
+        requestAnimationFrame(() => musicToggle.classList.add('is-ready'));
+        if (hasInteracted) void playBackgroundMusic();
+      })
+      .catch(() => {
+        // The portfolio works normally when no soundtrack has been added yet.
+      });
+  }
+
   const menuBtn = $('#menuBtn');
   const mobileNav = $('#mobileNav');
   const toggleMenu = (open) => {
