@@ -112,3 +112,164 @@ linear-gradient(180deg,#0a0b0f,#090a0d)}.hero-bg:after{content:"";position:absol
   .rahhesab-stats div{padding:9px 10px}
   .rahhesab-footer{margin-top:11px;padding-top:9px;font-size:6px}
 }
+
+/* Typography refinement: preserve layout while fixing Latin text metrics and RTL/LTR punctuation. */
+html {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-synthesis: none;
+}
+
+body {
+  font-family: "Estedad", "Vazirmatn", sans-serif;
+}
+
+.hero-meta,
+.hero-title,
+.hero-role,
+.editorial,
+.contact-title,
+.top-link,
+.item-meta > span,
+.visual-label,
+.visual-caption,
+.section-cap span,
+.why span,
+.tags span,
+.terminal-top,
+.terminal-body,
+.device-top,
+.device-bottom,
+.paper span,
+.paper div,
+.paper small,
+.fuel-gauge span,
+.fuel-name,
+.calorie-card-top,
+.calorie-number span,
+.macro-row i,
+.footer > span,
+.footer a,
+.excluded > span,
+.excluded strong {
+  font-family: "Plus Jakarta Sans", "Estedad", sans-serif;
+  unicode-bidi: isolate;
+}
+
+.hero-meta,
+.hero-title,
+.hero-role,
+.editorial,
+.contact-title,
+.item-meta > span,
+.visual-label,
+.visual-caption,
+.section-cap span,
+.why span,
+.tags span,
+.top-link,
+.footer > span,
+.footer a,
+.excluded > span {
+  direction: ltr;
+}
+
+.hero-title {
+  letter-spacing: -.065em;
+}
+
+.hero-role {
+  width: max-content;
+  max-width: 100%;
+  justify-content: flex-start;
+  gap: 11px;
+  font-weight: 500;
+}
+
+.hero-role i {
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  font-size: .9em;
+}
+
+.editorial {
+  letter-spacing: -.065em;
+}
+
+.contact-title {
+  letter-spacing: -.06em;
+}
+
+.timeline-copy h3 {
+  letter-spacing: -.04em;
+}
+
+.timeline-copy h3 small {
+  display: inline-block;
+  direction: ltr;
+  unicode-bidi: isolate;
+  font-family: "Plus Jakarta Sans", "Estedad", sans-serif;
+  letter-spacing: -.02em;
+  line-height: 1.15;
+}
+
+.tags span,
+.item-meta > span,
+.visual-label,
+.visual-caption,
+.why span,
+.section-cap span,
+.top-link,
+.footer > span,
+.footer a,
+.excluded > span,
+.excluded strong {
+  letter-spacing: .06em;
+}
+
+.top-link,
+.item-link,
+.text-link,
+.pill,
+.mobile-nav a {
+  unicode-bidi: isolate;
+}
+
+@media (max-width: 560px) {
+  .hero-title {
+    letter-spacing: -.045em;
+  }
+
+  .hero-title em {
+    letter-spacing: -.045em;
+  }
+
+  .hero-role {
+    font-size: 12px;
+    gap: 8px;
+  }
+
+  .editorial {
+    letter-spacing: -.05em;
+  }
+
+  .contact-title {
+    letter-spacing: -.045em;
+  }
+
+  .timeline-copy h3 {
+    letter-spacing: -.025em;
+  }
+
+  .timeline-copy h3 small {
+    font-size: .4em;
+    letter-spacing: -.01em;
+  }
+
+  .tags span {
+    font-size: 8px;
+  }
+}
+
