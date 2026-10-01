@@ -104,3 +104,70 @@ jobs:
             echo "amirvpn leaked into generated HTML."
             exit 1
           fi
+
+      - name: Browser smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium >/tmp/playwright-install.log 2>&1
+          python3 -m http.server 8080 >/tmp/portfolio-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill $SERVER_PID' EXIT
+          sleep 2
+          node <<'NODE'
+          const { chromium } = require('playwright');
+
+          (async() => {
+            const browser = await chromium.launch({headless:true});
+            try {
+              for (const viewport of [
+                {name:'desktop', width:1440, height:900},
+                {name:'mobile', width:390, height:844},
+              ]) {
+                const page = await browser.newPage({viewport:{width:viewport.width,height:viewport.height}});
+                const errors = [];
+                page.on('pageerror', err => errors.push('pageerror: ' + err.message));
+                page.on('console', msg => {
+                  if (msg.type() === 'error') errors.push('console: ' + msg.text());
+                });
+
+                await page.goto('http://127.0.0.1:8080/', {waitUntil:'networkidle'});
+                await page.waitForTimeout(300);
+
+                const state = await page.evaluate(() => {
+                  const items = [...document.querySelectorAll('.timeline-item')];
+                  const project7 = document.querySelector('.timeline-item[data-index="07"]');
+                  const overflow = document.documentElement.scrollWidth > document.documentElement.clientWidth + 2;
+                  const badItems = items.filter(el => {
+                    const r = el.getBoundingClientRect();
+                    return r.left < -2 || r.right > window.innerWidth + 2;
+                  }).map(el => el.dataset.index);
+                  return {
+                    title: document.title,
+                    projects: items.length,
+                    project7: !!project7,
+                    rahhesabLink: !!project7?.querySelector('a[href="https://github.com/Amirho33ein7/rah-hesab"]'),
+                    summary7: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '7'),
+                    overflow,
+                    badItems
+                  };
+                });
+
+                if (errors.length) throw new Error(viewport.name + ' runtime errors: ' + errors.join(' | '));
+                if (state.projects !== 7) throw new Error(viewport.name + ' expected 7 timeline projects, got ' + state.projects);
+                if (!state.project7 || !state.rahhesabLink) throw new Error(viewport.name + ' PROJECT 07 / Rahhesab link missing');
+                if (!state.summary7) throw new Error(viewport.name + ' 7-project summary counter missing');
+                if (state.overflow || state.badItems.length) throw new Error(viewport.name + ' horizontal overflow: ' + JSON.stringify(state.badItems));
+
+                await page.close();
+                console.log(viewport.name + ': PASS');
+              }
+            } finally {
+              await browser.close();
+            }
+          })().catch(err => {
+            console.error(err.stack || err);
+            process.exit(1);
+          });
+          NODE
