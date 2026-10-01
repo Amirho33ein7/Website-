@@ -138,17 +138,24 @@ jobs:
                 const state = await page.evaluate(() => {
                   const items = [...document.querySelectorAll('.timeline-item')];
                   const project7 = document.querySelector('.timeline-item[data-index="07"]');
+                  const visual7 = project7?.querySelector('.visual-rahhesab');
+                  const card7 = project7?.querySelector('.rahhesab-card');
                   const overflow = document.documentElement.scrollWidth > document.documentElement.clientWidth + 2;
                   const badItems = items.filter(el => {
                     const r = el.getBoundingClientRect();
                     return r.left < -2 || r.right > window.innerWidth + 2;
                   }).map(el => el.dataset.index);
+                  const visualRect = visual7?.getBoundingClientRect();
+                  const cardRect = card7?.getBoundingClientRect();
+                  const cardStyle = card7 ? getComputedStyle(card7) : null;
                   return {
                     title: document.title,
                     projects: items.length,
                     project7: !!project7,
                     rahhesabLink: !!project7?.querySelector('a[href="https://github.com/Amirho33ein7/rah-hesab"]'),
                     summary7: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '7'),
+                    rahhesabVisualVisible: !!visualRect && visualRect.width > 0 && visualRect.height > 0,
+                    rahhesabCardVisible: !!cardRect && cardRect.width > 0 && cardRect.height > 0 && cardStyle?.visibility !== 'hidden' && cardStyle?.display !== 'none' && Number(cardStyle?.opacity || 1) > 0,
                     overflow,
                     badItems
                   };
@@ -158,6 +165,7 @@ jobs:
                 if (state.projects !== 7) throw new Error(viewport.name + ' expected 7 timeline projects, got ' + state.projects);
                 if (!state.project7 || !state.rahhesabLink) throw new Error(viewport.name + ' PROJECT 07 / Rahhesab link missing');
                 if (!state.summary7) throw new Error(viewport.name + ' 7-project summary counter missing');
+                if (!state.rahhesabVisualVisible || !state.rahhesabCardVisible) throw new Error(viewport.name + ' Rahhesab visual/card is not visible');
                 if (state.overflow || state.badItems.length) throw new Error(viewport.name + ' horizontal overflow: ' + JSON.stringify(state.badItems));
 
                 await page.close();
