@@ -18,7 +18,7 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Optional background soundtrack: place the chosen audio file at /music.mp3.
+  // Optional background soundtrack: the soundtrack file is stored in the repository root.
   // Music starts after the visitor's first interaction and never restarts on later scrolls.
   const backgroundMusic = $('#backgroundMusic');
   const musicToggle = $('#musicToggle');
@@ -86,8 +86,8 @@
       musicToggle.hidden = true;
     });
 
-    // Check for the soundtrack first, so the control stays hidden until music.mp3 exists.
-    const musicUrl = new URL('music.mp3', document.baseURI);
+    // Check for the soundtrack first, so the control stays hidden until the soundtrack file exists.
+    const musicUrl = new URL('riserayss%20-%20Worry%20-%20Ultra%20Slowed%20(128).mp3', document.baseURI);
     fetch(musicUrl.href, { method: 'HEAD', cache: 'no-store' })
       .then(response => {
         if (!response.ok) return;
