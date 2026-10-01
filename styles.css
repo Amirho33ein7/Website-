@@ -273,3 +273,24 @@ body {
   }
 }
 
+/* Fix the final glyph of the large Latin hero name from tight tracking. */
+.hero-title {
+  letter-spacing: -.025em;
+}
+
+.hero-title em {
+  letter-spacing: -.015em;
+  padding-inline-end: .04em;
+}
+
+@media (max-width: 560px) {
+  .hero-title {
+    letter-spacing: -.025em;
+  }
+
+  .hero-title em {
+    letter-spacing: -.015em;
+    padding-inline-end: .04em;
+  }
+}
+
