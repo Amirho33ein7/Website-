@@ -18,88 +18,43 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Optional background soundtrack: the soundtrack file is stored in the repository root.
-  // Music starts after the visitor's first interaction and never restarts on later scrolls.
+  // Start background music after the visitor's first interaction anywhere on the page.
+  // The audio source is present in HTML so play() can be called inside the interaction handler.
   const backgroundMusic = $('#backgroundMusic');
-  const musicToggle = $('#musicToggle');
-  const musicIcon = $('.music-toggle-icon', musicToggle || document);
 
-  if (backgroundMusic && musicToggle && musicIcon) {
-    let musicReady = false;
-    let musicHasStarted = false;
-    let musicPausedByUser = false;
-    let hasInteracted = false;
+  if (backgroundMusic) {
+    let musicStarted = false;
     let playPending = false;
 
     backgroundMusic.volume = 0.24;
     backgroundMusic.loop = true;
 
-    const syncMusicToggle = () => {
-      const playing = !backgroundMusic.paused;
-      musicIcon.textContent = playing ? 'Ⅱ' : '♫';
-      musicToggle.classList.toggle('is-playing', playing);
-      musicToggle.setAttribute('aria-pressed', String(playing));
-      musicToggle.setAttribute('aria-label', playing ? 'قطع موسیقی' : 'پخش موسیقی');
-      musicToggle.title = playing ? 'قطع موسیقی' : 'پخش موسیقی';
-    };
-
-    const playBackgroundMusic = async () => {
-      if (!musicReady || musicPausedByUser || playPending || !backgroundMusic.paused) return;
+    const startBackgroundMusic = () => {
+      if (musicStarted || playPending) return;
       playPending = true;
-      try {
-        await backgroundMusic.play();
-        musicHasStarted = true;
-      } catch (_) {
-        // Some browsers require a clearer user gesture; the next interaction retries.
-      } finally {
-        playPending = false;
-        syncMusicToggle();
-      }
-    };
 
-    const onFirstInteraction = () => {
-      hasInteracted = true;
-      if (!musicHasStarted && !musicPausedByUser) void playBackgroundMusic();
+      try {
+        const playRequest = backgroundMusic.play();
+        if (playRequest && typeof playRequest.then === 'function') {
+          playRequest.then(() => {
+            musicStarted = true;
+            playPending = false;
+          }).catch(() => {
+            // Keep listening so a later genuine interaction can retry if the browser blocks playback.
+            playPending = false;
+          });
+        } else {
+          musicStarted = true;
+          playPending = false;
+        }
+      } catch (_) {
+        playPending = false;
+      }
     };
 
     ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll', 'click'].forEach(type => {
-      window.addEventListener(type, onFirstInteraction, { passive: true });
+      window.addEventListener(type, startBackgroundMusic, { passive: true });
     });
-
-    musicToggle.addEventListener('click', async () => {
-      if (!musicReady) return;
-      if (!backgroundMusic.paused) {
-        musicPausedByUser = true;
-        backgroundMusic.pause();
-        syncMusicToggle();
-        return;
-      }
-      musicPausedByUser = false;
-      await playBackgroundMusic();
-    });
-
-    backgroundMusic.addEventListener('play', syncMusicToggle);
-    backgroundMusic.addEventListener('pause', syncMusicToggle);
-    backgroundMusic.addEventListener('error', () => {
-      musicReady = false;
-      musicToggle.classList.remove('is-ready', 'is-playing');
-      musicToggle.hidden = true;
-    });
-
-    // Check for the soundtrack first, so the control stays hidden until the soundtrack file exists.
-    const musicUrl = new URL('riserayss%20-%20Worry%20-%20Ultra%20Slowed%20(128).mp3', document.baseURI);
-    fetch(musicUrl.href, { method: 'HEAD', cache: 'no-store' })
-      .then(response => {
-        if (!response.ok) return;
-        backgroundMusic.src = musicUrl.href;
-        musicReady = true;
-        musicToggle.hidden = false;
-        requestAnimationFrame(() => musicToggle.classList.add('is-ready'));
-        if (hasInteracted) void playBackgroundMusic();
-      })
-      .catch(() => {
-        // The portfolio works normally when no soundtrack has been added yet.
-      });
   }
 
   const menuBtn = $('#menuBtn');
