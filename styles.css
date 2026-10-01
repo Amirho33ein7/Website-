@@ -112,3 +112,69 @@ linear-gradient(180deg,#0a0b0f,#090a0d)}.hero-bg:after{content:"";position:absol
   .rahhesab-stats div{padding:9px 10px}
   .rahhesab-footer{margin-top:11px;padding-top:9px;font-size:6px}
 }
+
+/* Background music toggle — appears only when music.mp3 is available. */
+.music-toggle{
+  position:fixed;
+  left:max(18px,env(safe-area-inset-left));
+  bottom:max(18px,env(safe-area-inset-bottom));
+  z-index:1200;
+  display:grid;
+  place-items:center;
+  width:46px;
+  height:46px;
+  padding:0;
+  border:1px solid rgba(154,240,191,.25);
+  border-radius:50%;
+  background:rgba(9,12,16,.84);
+  color:#9af0bf;
+  box-shadow:0 10px 32px rgba(0,0,0,.32),inset 0 1px 0 rgba(255,255,255,.05);
+  -webkit-backdrop-filter:blur(14px);
+  backdrop-filter:blur(14px);
+  cursor:pointer;
+  opacity:0;
+  transform:translateY(8px) scale(.94);
+  pointer-events:none;
+  transition:opacity .25s ease,transform .25s ease,border-color .25s ease,color .25s ease,background .25s ease;
+}
+.music-toggle[hidden]{display:none!important}
+.music-toggle.is-ready{
+  opacity:1;
+  transform:translateY(0) scale(1);
+  pointer-events:auto;
+}
+.music-toggle:hover{
+  border-color:rgba(154,240,191,.65);
+  background:rgba(13,20,22,.96);
+}
+.music-toggle:focus-visible{
+  outline:2px solid #9af0bf;
+  outline-offset:4px;
+}
+.music-toggle-icon{
+  position:relative;
+  z-index:1;
+  display:block;
+  font:700 21px/1 "Plus Jakarta Sans","Estedad",sans-serif;
+}
+.music-toggle.is-playing{
+  color:#e7fff0;
+  border-color:rgba(154,240,191,.55);
+}
+.music-toggle.is-playing::before{
+  content:"";
+  position:absolute;
+  inset:-5px;
+  border:1px solid rgba(154,240,191,.34);
+  border-radius:50%;
+  pointer-events:none;
+  animation:musicPulse 2.4s ease-out infinite;
+}
+@keyframes musicPulse{
+  0%{transform:scale(.92);opacity:.8}
+  100%{transform:scale(1.16);opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  .music-toggle{transition:none}
+  .music-toggle.is-playing::before{animation:none}
+}
