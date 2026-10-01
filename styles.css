@@ -93,3 +93,22 @@ linear-gradient(180deg,#0a0b0f,#090a0d)}.hero-bg:after{content:"";position:absol
 .rahhesab-stats span{display:block;color:#716879;font-size:7px}
 .rahhesab-stats b{display:block;margin-top:4px;color:#f2edf5;font:700 13px "JetBrains Mono",monospace}
 .rahhesab-footer{display:flex;justify-content:space-between;margin-top:15px;padding-top:11px;border-top:1px solid rgba(255,255,255,.07);color:#6d6672;font:600 7px "JetBrains Mono",monospace;letter-spacing:.08em}
+
+/* Rahhesab mobile rendering fix: keep the project visual contained and explicitly sized on narrow Chrome viewports. */
+.visual-rahhesab{isolation:isolate;min-height:540px}
+.rahhesab-stage{z-index:0}
+.rahhesab-card{z-index:2;max-width:calc(100% - 44px)}
+.rahhesab-orbit{z-index:1;pointer-events:none}
+@media (max-width:560px){
+  .visual-rahhesab{min-height:330px}
+  .rahhesab-stage{inset:0;display:flex;align-items:center;justify-content:center}
+  .rahhesab-stage .orbit-one{width:285px;height:285px}
+  .rahhesab-stage .orbit-two{width:205px;height:205px}
+  .rahhesab-card{width:calc(100% - 44px);max-width:300px;padding:18px;transform:rotate(-2deg)}
+  .rahhesab-title{margin-top:14px;font-size:24px}
+  .rahhesab-total{margin-top:13px;padding:11px 12px}
+  .rahhesab-total strong{font-size:23px}
+  .rahhesab-stats{gap:7px}
+  .rahhesab-stats div{padding:9px 10px}
+  .rahhesab-footer{margin-top:11px;padding-top:9px;font-size:6px}
+}
