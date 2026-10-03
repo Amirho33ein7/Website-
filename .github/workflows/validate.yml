@@ -176,9 +176,19 @@ jobs:
               // must be resumed from user activation.
               await page.waitForTimeout(500);
               await page.touchscreen.tap(140, 150);
-              await page.waitForTimeout(2200);
+              await page.waitForTimeout(1700);
 
-              const state = await page.evaluate(() => window.__backgroundMusicDebug?.() || null);
+              let state = await page.evaluate(() => window.__backgroundMusicDebug?.() || null);
+
+              // On browsers that keep an AudioContext suspended after incidental
+              // touch, use the explicit recovery control as the trusted gesture.
+              if (state?.recoveryVisible) {
+                const recovery = page.locator('#musicStartButton');
+                await recovery.waitFor({state:'visible', timeout:3000});
+                await recovery.click();
+                await page.waitForTimeout(2200);
+                state = await page.evaluate(() => window.__backgroundMusicDebug?.() || null);
+              }
               console.log(JSON.stringify({state,errors}, null, 2));
 
               if (errors.length) throw new Error('runtime errors: ' + errors.join(' | '));
