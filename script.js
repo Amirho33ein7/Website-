@@ -18,42 +18,61 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Start background music after the visitor's first interaction anywhere on the page.
-  // The audio source is present in HTML so play() can be called inside the interaction handler.
+  // Start background music from a genuine user interaction.
+  // Keep the audio element audible and retry safely when a browser rejects the first play() call.
   const backgroundMusic = $('#backgroundMusic');
 
   if (backgroundMusic) {
     let musicStarted = false;
     let playPending = false;
 
-    backgroundMusic.volume = 0.24;
+    backgroundMusic.defaultMuted = false;
+    backgroundMusic.muted = false;
     backgroundMusic.loop = true;
+    backgroundMusic.volume = 0.45;
+    backgroundMusic.preload = 'auto';
+    backgroundMusic.playsInline = true;
 
     const startBackgroundMusic = () => {
       if (musicStarted || playPending) return;
+
       playPending = true;
 
       try {
         const playRequest = backgroundMusic.play();
-        if (playRequest && typeof playRequest.then === 'function') {
-          playRequest.then(() => {
-            musicStarted = true;
-            playPending = false;
-          }).catch(() => {
-            // Keep listening so a later genuine interaction can retry if the browser blocks playback.
-            playPending = false;
-          });
-        } else {
+        Promise.resolve(playRequest).then(() => {
           musicStarted = true;
           playPending = false;
-        }
+        }).catch(() => {
+          // Browser policy can reject playback; a later real interaction can retry.
+          musicStarted = false;
+          playPending = false;
+        });
       } catch (_) {
+        musicStarted = false;
         playPending = false;
       }
     };
 
-    ['pointerdown', 'touchstart', 'keydown', 'wheel', 'scroll', 'click'].forEach(type => {
+    // These events are genuine user interactions and work more reliably for
+    // audible media than wheel/scroll events.
+    ['pointerup', 'touchend', 'click', 'keydown'].forEach(type => {
       window.addEventListener(type, startBackgroundMusic, { passive: true });
+    });
+
+    // If playback is interrupted, allow the next user interaction to restart it.
+    backgroundMusic.addEventListener('pause', () => {
+      if (!backgroundMusic.ended) musicStarted = false;
+    });
+
+    backgroundMusic.addEventListener('playing', () => {
+      musicStarted = true;
+      playPending = false;
+    });
+
+    backgroundMusic.addEventListener('error', () => {
+      musicStarted = false;
+      playPending = false;
     });
   }
 
