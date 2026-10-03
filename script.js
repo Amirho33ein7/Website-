@@ -18,91 +18,133 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Start background music from a real user gesture.
-  // Keep this intentionally simple: one local source, no delayed load()/source swaps
-  // that could invalidate the gesture on mobile browsers.
-  const backgroundMusic = $('#backgroundMusic');
+  // Background music uses Web Audio instead of HTMLMediaElement.
+  // The AudioContext is created/resumed from a real user gesture, then a fully
+  // decoded AudioBufferSourceNode is started and looped. This avoids the
+  // Android cases where an <audio> element can remain visually at 0:00.
+  const MUSIC_URL = new URL('riserayss - Worry - Ultra Slowed (128).mp3', document.baseURI).href;
 
-  if (backgroundMusic) {
-    let musicStarted = false;
-    let playPending = false;
+  let musicContext = null;
+  let musicBufferPromise = null;
+  let musicBuffer = null;
+  let musicSource = null;
+  let musicGain = null;
+  let musicStarted = false;
+  let musicPending = false;
+  let musicStartTime = null;
 
-    backgroundMusic.defaultMuted = false;
-    backgroundMusic.muted = false;
-    backgroundMusic.loop = true;
-    backgroundMusic.preload = 'auto';
-    backgroundMusic.playsInline = true;
-    backgroundMusic.volume = 0.45;
+  const getMusicContext = () => {
+    if (!musicContext) {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) throw new Error('Web Audio API is not supported');
+      musicContext = new Ctx();
+    }
+    return musicContext;
+  };
 
-    const startBackgroundMusic = () => {
-      if (musicStarted || playPending) return;
-
-      backgroundMusic.defaultMuted = false;
-      backgroundMusic.muted = false;
-      if (!(backgroundMusic.volume > 0)) backgroundMusic.volume = 0.45;
-
-      playPending = true;
-
-      try {
-        const request = backgroundMusic.play();
-
-        Promise.resolve(request).then(() => {
-          playPending = false;
-          // Treat the media as started only when the browser reports an active
-          // playing state. Do not call load() here: it can abort the play request.
-          musicStarted = !backgroundMusic.paused;
-        }).catch(() => {
-          musicStarted = false;
-          playPending = false;
-        });
-      } catch (_) {
-        musicStarted = false;
-        playPending = false;
-      }
-    };
-
-    // Capture touch/pointer/keyboard activation at the earliest reliable phase.
-    ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(type => {
-      document.addEventListener(type, startBackgroundMusic, {
-        passive: true,
-        capture: true
+  const fetchMusicData = () => {
+    if (!musicBufferPromise) {
+      musicBufferPromise = fetch(MUSIC_URL, {
+        method: 'GET',
+        cache: 'force-cache',
+        credentials: 'same-origin'
+      }).then(response => {
+        if (!response.ok) throw new Error('Music request failed: HTTP ' + response.status);
+        return response.arrayBuffer();
       });
-    });
+    }
+    return musicBufferPromise;
+  };
 
-    backgroundMusic.addEventListener('playing', () => {
-      musicStarted = true;
-      playPending = false;
-    });
+  const decodeMusic = async () => {
+    if (musicBuffer) return musicBuffer;
+    const ctx = getMusicContext();
+    const data = await fetchMusicData();
+    musicBuffer = await ctx.decodeAudioData(data.slice(0));
+    if (!musicBuffer || !(musicBuffer.duration > 0)) {
+      throw new Error('Music decoded without a valid duration');
+    }
+    return musicBuffer;
+  };
 
-    backgroundMusic.addEventListener('pause', () => {
-      if (!backgroundMusic.ended) {
-        musicStarted = false;
-        playPending = false;
+  const stopMusicSource = () => {
+    if (!musicSource) return;
+    try { musicSource.stop(); } catch (_) {}
+    try { musicSource.disconnect(); } catch (_) {}
+    musicSource = null;
+  };
+
+  const startWebAudioMusic = async () => {
+    if (musicStarted || musicPending) return;
+
+    musicPending = true;
+
+    try {
+      const ctx = getMusicContext();
+
+      // This call MUST happen from the user gesture path.
+      if (ctx.state !== 'running') {
+        await ctx.resume();
       }
-    });
 
-    backgroundMusic.addEventListener('error', () => {
+      if (ctx.state !== 'running') {
+        throw new Error('AudioContext did not reach running state');
+      }
+
+      const buffer = await decodeMusic();
+
+      stopMusicSource();
+
+      musicGain = ctx.createGain();
+      musicGain.gain.value = 0.45;
+      musicGain.connect(ctx.destination);
+
+      musicSource = ctx.createBufferSource();
+      musicSource.buffer = buffer;
+      musicSource.loop = true;
+      musicSource.connect(musicGain);
+
+      // Start immediately on the running context. The source's loop is handled
+      // natively by Web Audio, so there is no HTML media timeline stuck at 0:00.
+      musicSource.start(0);
+
+      musicStartTime = ctx.currentTime;
+      musicStarted = true;
+      musicPending = false;
+    } catch (error) {
       musicStarted = false;
-      playPending = false;
-    });
+      musicPending = false;
+      console.error('Background music failed:', error);
+    }
+  };
 
-    // Diagnostic helper for regression testing.
-    window.__backgroundMusicDebug = () => ({
-      currentSrc: backgroundMusic.currentSrc,
-      currentTime: backgroundMusic.currentTime,
-      duration: backgroundMusic.duration,
-      paused: backgroundMusic.paused,
-      muted: backgroundMusic.muted,
-      defaultMuted: backgroundMusic.defaultMuted,
-      volume: backgroundMusic.volume,
-      readyState: backgroundMusic.readyState,
-      networkState: backgroundMusic.networkState,
-      error: backgroundMusic.error ? {
-        code: backgroundMusic.error.code,
-        message: backgroundMusic.error.message || ''
-      } : null
-    });
-  }
+  // Use the earliest touch/pointer event so Android receives the activation.
+  ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(type => {
+    document.addEventListener(type, () => {
+      void startWebAudioMusic();
+    }, {passive: true, capture: true});
+  });
+
+  // Mobile browsers can suspend audio while the page is backgrounded.
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && musicContext && musicContext.state !== 'running' && musicStarted) {
+      musicContext.resume().catch(() => {});
+    }
+  });
+
+  window.__backgroundMusicDebug = () => ({
+    url: MUSIC_URL,
+    contextState: musicContext ? musicContext.state : 'not-created',
+    contextCurrentTime: musicContext ? musicContext.currentTime : 0,
+    bufferDuration: musicBuffer ? musicBuffer.duration : 0,
+    bufferSampleRate: musicBuffer ? musicBuffer.sampleRate : 0,
+    bufferChannels: musicBuffer ? musicBuffer.numberOfChannels : 0,
+    gain: musicGain ? musicGain.gain.value : 0,
+    sourceStarted: !!musicSource && musicStarted,
+    startTime: musicStartTime,
+    pending: musicPending,
+    error: null
+  });
 
   const menuBtn = $('#menuBtn');
   const mobileNav = $('#mobileNav');
