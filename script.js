@@ -18,13 +18,17 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Start background music from a genuine user interaction.
-  // Keep the audio element audible and retry safely when a browser rejects the first play() call.
+  // Background music: preload the media, then start it directly from a trusted user gesture.
+  // Important: do not treat play()'s Promise resolution alone as proof of actual playback.
+  // Some Android/browser combinations can report a successful play request while the
+  // playback position remains frozen at 0. We verify the real media timeline as well.
   const backgroundMusic = $('#backgroundMusic');
 
   if (backgroundMusic) {
     let musicStarted = false;
     let playPending = false;
+    let playbackWatchdog = 0;
+    let lastObservedTime = 0;
 
     backgroundMusic.defaultMuted = false;
     backgroundMusic.muted = false;
@@ -33,18 +37,58 @@
     backgroundMusic.preload = 'auto';
     backgroundMusic.playsInline = true;
 
+    // Start loading the local asset immediately. Loading is allowed before
+    // user activation; audible playback itself remains gesture-gated.
+    try { backgroundMusic.load(); } catch (_) {}
+
+    const markPlaying = () => {
+      musicStarted = true;
+      playPending = false;
+      lastObservedTime = backgroundMusic.currentTime || 0;
+      if (playbackWatchdog) {
+        clearTimeout(playbackWatchdog);
+        playbackWatchdog = 0;
+      }
+    };
+
+    const verifyPlayback = () => {
+      const now = backgroundMusic.currentTime || 0;
+      const advanced = now > lastObservedTime + 0.05;
+
+      if (advanced || backgroundMusic.ended) {
+        musicStarted = !backgroundMusic.ended;
+        lastObservedTime = now;
+        playPending = false;
+        return;
+      }
+
+      // A resolved play() request with a frozen 0:00 position is not usable.
+      // Leave the player eligible for another real user gesture instead of
+      // permanently locking it into the false "started" state.
+      musicStarted = false;
+      playPending = false;
+    };
+
     const startBackgroundMusic = () => {
       if (musicStarted || playPending) return;
 
+      // A real pointer/touch/keyboard gesture has already happened at this point.
+      // Explicitly restore an audible state in case a browser persisted a muted state.
+      backgroundMusic.defaultMuted = false;
+      backgroundMusic.muted = false;
+      if (!(backgroundMusic.volume > 0)) backgroundMusic.volume = 0.45;
+
       playPending = true;
+      lastObservedTime = backgroundMusic.currentTime || 0;
 
       try {
         const playRequest = backgroundMusic.play();
+
         Promise.resolve(playRequest).then(() => {
-          musicStarted = true;
-          playPending = false;
+          // Do NOT set musicStarted here. The browser promise only tells us
+          // the play request was accepted; the media timeline must move too.
+          playbackWatchdog = window.setTimeout(verifyPlayback, 900);
         }).catch(() => {
-          // Browser policy can reject playback; a later real interaction can retry.
           musicStarted = false;
           playPending = false;
         });
@@ -54,25 +98,68 @@
       }
     };
 
-    // These events are genuine user interactions and work more reliably for
-    // audible media than wheel/scroll events.
+    // Capture the gesture as early as possible. Per the platform's user
+    // activation model, pointerup/touchend/keydown are trusted activation events.
     ['pointerup', 'touchend', 'click', 'keydown'].forEach(type => {
-      window.addEventListener(type, startBackgroundMusic, { passive: true });
+      document.addEventListener(type, startBackgroundMusic, {
+        passive: true,
+        capture: true
+      });
     });
 
-    // If playback is interrupted, allow the next user interaction to restart it.
+    backgroundMusic.addEventListener('playing', markPlaying);
+    backgroundMusic.addEventListener('timeupdate', () => {
+      const now = backgroundMusic.currentTime || 0;
+      if (!backgroundMusic.paused && now > lastObservedTime + 0.02) {
+        musicStarted = true;
+        playPending = false;
+        lastObservedTime = now;
+      }
+    });
+
     backgroundMusic.addEventListener('pause', () => {
-      if (!backgroundMusic.ended) musicStarted = false;
+      if (!backgroundMusic.ended) {
+        musicStarted = false;
+        playPending = false;
+      }
     });
 
-    backgroundMusic.addEventListener('playing', () => {
-      musicStarted = true;
+    backgroundMusic.addEventListener('ended', () => {
+      musicStarted = false;
       playPending = false;
     });
 
     backgroundMusic.addEventListener('error', () => {
       musicStarted = false;
       playPending = false;
+      if (playbackWatchdog) {
+        clearTimeout(playbackWatchdog);
+        playbackWatchdog = 0;
+      }
+    });
+
+    // Expose diagnostics only for manual/browser debugging; no UI is changed.
+    window.__backgroundMusicDebug = () => ({
+      currentSrc: backgroundMusic.currentSrc,
+      currentTime: backgroundMusic.currentTime,
+      duration: backgroundMusic.duration,
+      paused: backgroundMusic.paused,
+      ended: backgroundMusic.ended,
+      muted: backgroundMusic.muted,
+      defaultMuted: backgroundMusic.defaultMuted,
+      volume: backgroundMusic.volume,
+      readyState: backgroundMusic.readyState,
+      networkState: backgroundMusic.networkState,
+      error: backgroundMusic.error ? {
+        code: backgroundMusic.error.code,
+        message: backgroundMusic.error.message || ''
+      } : null,
+      musicStarted,
+      playPending,
+      userActivated: navigator.userActivation ? {
+        hasBeenActive: navigator.userActivation.hasBeenActive,
+        isActive: navigator.userActivation.isActive
+      } : null
     });
   }
 
