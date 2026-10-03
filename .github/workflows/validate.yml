@@ -145,73 +145,54 @@ jobs:
               raise SystemExit("MP3 sample rate/channels are invalid.")
           print(f"PASS: duration={audio.info.length:.3f}s sample_rate={audio.info.sample_rate}Hz channels={audio.info.channels} bitrate={getattr(audio.info,'bitrate',None)}")
 
-      - name: Browser-test deployed audio
+      - name: Browser-test deployed Web Audio
         shell: bash
         run: |
           set -euo pipefail
           npm install --no-save playwright
           npx playwright install --with-deps chromium >/tmp/playwright-install.log 2>&1
           node <<'NODE'
-          const { chromium } = require('playwright');
+          const { chromium, devices } = require('playwright');
 
           (async() => {
             const browser = await chromium.launch({headless:true});
             try {
-              const page = await browser.newPage({viewport:{width:390,height:844}});
+              const context = await browser.newContext({
+                ...devices['Pixel 5'],
+                permissions: []
+              });
+              const page = await context.newPage();
+
               const errors = [];
               page.on('pageerror', e => errors.push('pageerror: ' + e.message));
               page.on('console', m => {
                 if (m.type() === 'error') errors.push('console: ' + m.text());
               });
 
-              const url = 'https://amirho33ein7.github.io/Website-/?deployed-audio-test=1';
+              const url = 'https://amirho33ein7.github.io/Website-/?webaudio-test=1';
               await page.goto(url, {waitUntil:'networkidle', timeout:60000});
 
-              const stateBefore = await page.evaluate(() => {
-                const a = document.querySelector('#backgroundMusic');
-                return a ? {
-                  src: a.currentSrc,
-                  readyState: a.readyState,
-                  networkState: a.networkState,
-                  duration: a.duration,
-                  paused: a.paused,
-                  muted: a.muted,
-                  defaultMuted: a.defaultMuted,
-                  volume: a.volume,
-                  error: a.error ? {code:a.error.code, message:a.error.message || ''} : null
-                } : null;
-              });
+              // Fetch/decode can be prepared before the gesture, but AudioContext
+              // must be resumed from user activation.
+              await page.waitForTimeout(500);
+              await page.touchscreen.tap(140, 150);
+              await page.waitForTimeout(2200);
 
-              if (!stateBefore) throw new Error('deployed audio element missing');
-
-              await page.mouse.click(140, 150);
-              await page.waitForTimeout(1800);
-
-              const stateAfter = await page.evaluate(() => {
-                const a = document.querySelector('#backgroundMusic');
-                return {
-                  src: a.currentSrc,
-                  currentTime: a.currentTime,
-                  readyState: a.readyState,
-                  networkState: a.networkState,
-                  duration: a.duration,
-                  paused: a.paused,
-                  muted: a.muted,
-                  defaultMuted: a.defaultMuted,
-                  volume: a.volume,
-                  error: a.error ? {code:a.error.code, message:a.error.message || ''} : null
-                };
-              });
-
-              console.log(JSON.stringify({stateBefore,stateAfter,errors},null,2));
+              const state = await page.evaluate(() => window.__backgroundMusicDebug?.() || null);
+              console.log(JSON.stringify({state,errors}, null, 2));
 
               if (errors.length) throw new Error('runtime errors: ' + errors.join(' | '));
-              if (!(stateAfter.duration > 0)) throw new Error('deployed audio has no duration');
-              if (stateAfter.muted || stateAfter.defaultMuted || !(stateAfter.volume > 0)) throw new Error('deployed audio is muted or volume is zero');
-              if (stateAfter.paused) throw new Error('deployed audio is paused after user gesture');
-              if (!(stateAfter.currentTime > 0.2)) throw new Error('deployed audio timeline is still stuck at 0:00: ' + JSON.stringify(stateAfter));
-              console.log('DEPLOYED AUDIO: PASS');
-              await page.close();
+              if (!state) throw new Error('Web Audio diagnostics are missing');
+              if (state.contextState !== 'running') throw new Error('AudioContext is not running: ' + JSON.stringify(state));
+              if (!(state.bufferDuration > 0)) throw new Error('AudioBuffer has no duration: ' + JSON.stringify(state));
+              if (!(state.bufferSampleRate > 0) || !(state.bufferChannels > 0)) throw new Error('AudioBuffer format is invalid: ' + JSON.stringify(state));
+              if (!(state.gain > 0)) throw new Error('Web Audio gain is zero: ' + JSON.stringify(state));
+              if (!state.sourceStarted) throw new Error('Web Audio source did not start: ' + JSON.stringify(state));
+              if (!(state.contextCurrentTime > state.startTime + 0.5)) {
+                throw new Error('Web Audio clock did not advance after start: ' + JSON.stringify(state));
+              }
+              console.log('MOBILE WEB AUDIO: PASS');
+              await context.close();
             } finally {
               await browser.close();
             }
@@ -220,6 +201,7 @@ jobs:
             process.exit(1);
           });
           NODE
+
 
       - name: Smoke test static site
         shell: bash
