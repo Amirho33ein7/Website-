@@ -18,160 +18,88 @@
   window.addEventListener('scroll', onScroll, {passive:true});
   onScroll();
 
-  // Background music uses Web Audio instead of HTMLMediaElement.
-  // A direct user click is the reliable recovery path on browsers that keep
-  // AudioContext suspended after incidental touch/scroll interaction.
-  const MUSIC_URL = new URL('riserayss - Worry - Ultra Slowed (128).mp3', document.baseURI).href;
+  // Background music: native HTML audio + an always-visible user-activation control.
+  // Mobile browsers may block audible autoplay, so the button is the guaranteed manual path.
+  const backgroundMusic = $('#backgroundMusic');
   const musicStartButton = $('#musicStartButton');
+  let musicPlayPending = false;
 
-  let musicContext = null;
-  let musicBufferPromise = null;
-  let musicBuffer = null;
-  let musicSource = null;
-  let musicGain = null;
-  let musicStarted = false;
-  let musicPending = false;
-  let musicStartTime = null;
-
-  const showMusicRecovery = () => {
-    if (musicStartButton) musicStartButton.hidden = false;
+  const setMusicButtonState = (playing) => {
+    if (!musicStartButton) return;
+    musicStartButton.textContent = playing ? '❚❚ توقف موسیقی' : '♪ پخش موسیقی';
+    musicStartButton.setAttribute('aria-label', playing ? 'توقف موسیقی' : 'پخش موسیقی');
+    musicStartButton.setAttribute('aria-pressed', String(playing));
   };
 
-  const hideMusicRecovery = () => {
-    if (musicStartButton) musicStartButton.hidden = true;
-  };
-
-  const getMusicContext = () => {
-    if (!musicContext) {
-      const Ctx = window.AudioContext || window.webkitAudioContext;
-      if (!Ctx) throw new Error('Web Audio API is not supported');
-      musicContext = new Ctx();
+  const playBackgroundMusic = async () => {
+    if (!backgroundMusic || musicPlayPending) return;
+    if (!backgroundMusic.paused) {
+      setMusicButtonState(true);
+      return;
     }
-    return musicContext;
-  };
 
-  const fetchMusicData = () => {
-    if (!musicBufferPromise) {
-      musicBufferPromise = fetch(MUSIC_URL, {
-        method: 'GET',
-        cache: 'force-cache',
-        credentials: 'same-origin'
-      }).then(response => {
-        if (!response.ok) throw new Error('Music request failed: HTTP ' + response.status);
-        return response.arrayBuffer();
-      });
-    }
-    return musicBufferPromise;
-  };
-
-  const decodeMusic = async () => {
-    if (musicBuffer) return musicBuffer;
-    const ctx = getMusicContext();
-    const data = await fetchMusicData();
-    musicBuffer = await ctx.decodeAudioData(data.slice(0));
-    if (!musicBuffer || !(musicBuffer.duration > 0)) {
-      throw new Error('Music decoded without a valid duration');
-    }
-    return musicBuffer;
-  };
-
-  const stopMusicSource = () => {
-    if (!musicSource) return;
-    try { musicSource.stop(); } catch (_) {}
-    try { musicSource.disconnect(); } catch (_) {}
-    musicSource = null;
-  };
-
-  const resumeWithTimeout = async (ctx) => {
-    if (ctx.state === 'running') return;
-    const timeout = new Promise((_, reject) => {
-      window.setTimeout(() => reject(new Error('AudioContext resume timed out')), 1200);
-    });
-    await Promise.race([ctx.resume(), timeout]);
-    if (ctx.state !== 'running') {
-      throw new Error('AudioContext did not reach running state');
-    }
-  };
-
-  const startWebAudioMusic = async () => {
-    if (musicStarted || musicPending) return;
-
-    musicPending = true;
-
+    musicPlayPending = true;
     try {
-      const ctx = getMusicContext();
-
-      // Resume immediately from the user-activation event.
-      await resumeWithTimeout(ctx);
-
-      const buffer = await decodeMusic();
-
-      // The context may have been suspended while the MP3 decoded; resume again
-      // before creating/starting the source.
-      await resumeWithTimeout(ctx);
-
-      stopMusicSource();
-
-      musicGain = ctx.createGain();
-      musicGain.gain.value = 0.45;
-      musicGain.connect(ctx.destination);
-
-      musicSource = ctx.createBufferSource();
-      musicSource.buffer = buffer;
-      musicSource.loop = true;
-      musicSource.connect(musicGain);
-
-      musicSource.onended = () => {
-        // A looped source should not end during normal playback.
-        if (musicSource && !musicSource.loop) {
-          musicStarted = false;
-          showMusicRecovery();
-        }
-      };
-
-      musicSource.start(0);
-      musicStartTime = ctx.currentTime;
-      musicStarted = true;
-      musicPending = false;
-      hideMusicRecovery();
+      backgroundMusic.loop = true;
+      backgroundMusic.muted = false;
+      backgroundMusic.defaultMuted = false;
+      backgroundMusic.volume = 0.45;
+      await backgroundMusic.play();
+      setMusicButtonState(true);
     } catch (error) {
-      musicStarted = false;
-      musicPending = false;
-      console.error('Background music failed:', error);
-      showMusicRecovery();
+      console.warn('Background music could not start until a direct user gesture:', error);
+      setMusicButtonState(false);
+    } finally {
+      musicPlayPending = false;
     }
   };
 
-  // Incidental user interaction gets a chance to start music automatically.
-  ['pointerup', 'touchend', 'click', 'keydown'].forEach(type => {
+  const toggleBackgroundMusic = async () => {
+    if (!backgroundMusic) return;
+    if (backgroundMusic.paused) {
+      await playBackgroundMusic();
+    } else {
+      backgroundMusic.pause();
+      setMusicButtonState(false);
+    }
+  };
+
+  setMusicButtonState(false);
+
+  // Try to start after the first genuine interaction; the visible button remains
+  // available on phones where autoplay is blocked.
+  ['pointerup', 'touchend', 'keydown'].forEach(type => {
     document.addEventListener(type, () => {
-      void startWebAudioMusic();
+      void playBackgroundMusic();
     }, {passive:true, capture:true});
   });
 
-  // A direct click on this control is the explicit user-activation fallback.
   musicStartButton?.addEventListener('click', () => {
-    void startWebAudioMusic();
+    void toggleBackgroundMusic();
   });
 
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && musicContext && musicStarted && musicContext.state !== 'running') {
-      musicContext.resume().catch(() => {});
-    }
+  backgroundMusic?.addEventListener('play', () => setMusicButtonState(true));
+  backgroundMusic?.addEventListener('pause', () => setMusicButtonState(false));
+  backgroundMusic?.addEventListener('ended', () => {
+    setMusicButtonState(false);
+    void playBackgroundMusic();
   });
 
   window.__backgroundMusicDebug = () => ({
-    url: MUSIC_URL,
-    contextState: musicContext ? musicContext.state : 'not-created',
-    contextCurrentTime: musicContext ? musicContext.currentTime : 0,
-    bufferDuration: musicBuffer ? musicBuffer.duration : 0,
-    bufferSampleRate: musicBuffer ? musicBuffer.sampleRate : 0,
-    bufferChannels: musicBuffer ? musicBuffer.numberOfChannels : 0,
-    gain: musicGain ? musicGain.gain.value : 0,
-    sourceStarted: !!musicSource && musicStarted,
-    startTime: musicStartTime,
-    pending: musicPending,
-    recoveryVisible: !!musicStartButton && !musicStartButton.hidden
+    url: backgroundMusic?.currentSrc || new URL('riserayss - Worry - Ultra Slowed (128).mp3', document.baseURI).href,
+    paused: backgroundMusic ? backgroundMusic.paused : true,
+    muted: backgroundMusic ? backgroundMusic.muted : true,
+    defaultMuted: backgroundMusic ? backgroundMusic.defaultMuted : true,
+    volume: backgroundMusic ? backgroundMusic.volume : 0,
+    readyState: backgroundMusic ? backgroundMusic.readyState : 0,
+    networkState: backgroundMusic ? backgroundMusic.networkState : 0,
+    currentTime: backgroundMusic ? backgroundMusic.currentTime : 0,
+    duration: backgroundMusic ? backgroundMusic.duration : 0,
+    error: backgroundMusic?.error ? {
+      code: backgroundMusic.error.code,
+      message: backgroundMusic.error.message || ''
+    } : null,
+    buttonVisible: !!musicStartButton && !musicStartButton.hidden
   });
 
   const menuBtn = $('#menuBtn');
