@@ -83,6 +83,68 @@ jobs:
           print("All local HTML references resolve.")
           PY
 
+      - name: Validate deployed audio resource
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, time, urllib.request
+          from pathlib import Path
+
+          base = "https://amirho33ein7.github.io/Website-/"
+          audio = base + "riserayss%20-%20Worry%20-%20Ultra%20Slowed%20(128).mp3"
+
+          # Wait briefly for GitHub Pages to publish the pushed commit.
+          last = None
+          for attempt in range(12):
+              try:
+                  req = urllib.request.Request(base + "?audio-regression=1", headers={"Cache-Control": "no-cache"})
+                  with urllib.request.urlopen(req, timeout=15) as r:
+                      html = r.read().decode("utf-8", "replace")
+                      last = html
+                      if "20261003-audiofix" in html:
+                          break
+              except Exception:
+                  pass
+              time.sleep(5)
+          else:
+              raise SystemExit("Deployed page did not expose the new audio script marker.")
+
+          req = urllib.request.Request(audio, method="HEAD", headers={"Cache-Control":"no-cache"})
+          with urllib.request.urlopen(req, timeout=20) as r:
+              headers = {k.lower(): v for k,v in r.headers.items()}
+              print(json.dumps({
+                  "status": r.status,
+                  "content_type": headers.get("content-type"),
+                  "content_length": headers.get("content-length"),
+                  "accept_ranges": headers.get("accept-ranges"),
+                  "content_range": headers.get("content-range"),
+              }, indent=2))
+
+              ct = (headers.get("content-type") or "").lower()
+              if "audio/mpeg" not in ct:
+                  raise SystemExit("Deployed audio Content-Type is not audio/mpeg: " + ct)
+              if headers.get("accept-ranges","").lower() != "bytes":
+                  raise SystemExit("Deployed audio does not advertise Accept-Ranges: bytes")
+
+          data = urllib.request.urlopen(audio, timeout=30).read()
+          Path("/tmp/site-audio.mp3").write_bytes(data)
+          if len(data) < 100000:
+              raise SystemExit(f"Deployed MP3 is unexpectedly small: {len(data)} bytes")
+          print("Downloaded deployed audio:", len(data), "bytes")
+          PY
+          python3 -m pip install --quiet mutagen
+          python3 - <<'PY'
+          from mutagen.mp3 import MP3
+          p="/tmp/site-audio.mp3"
+          audio=MP3(p)
+          print("MP3 info:", audio.info)
+          if not audio.info.length or audio.info.length <= 0:
+              raise SystemExit("MP3 duration is invalid.")
+          if not audio.info.sample_rate or not audio.info.channels:
+              raise SystemExit("MP3 sample rate/channels are invalid.")
+          print(f"PASS: duration={audio.info.length:.3f}s sample_rate={audio.info.sample_rate}Hz channels={audio.info.channels} bitrate={getattr(audio.info,'bitrate',None)}")
+
       - name: Smoke test static site
         shell: bash
         run: |
