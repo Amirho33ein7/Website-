@@ -37,10 +37,31 @@
     backgroundMusic.preload = 'auto';
     backgroundMusic.playsInline = true;
 
-    // Start loading the local asset immediately. Loading is allowed before
-    // user activation; audible playback itself remains gesture-gated.
-    try { backgroundMusic.load(); } catch (_) {}
+    const sources = backgroundMusic.querySelectorAll('source');
+    let activeSource = 0;
+    let sourceFallbackTimer = 0;
 
+    const useAudioSource = (index) => {
+      if (!sources.length || index >= sources.length) return false;
+      activeSource = index;
+      backgroundMusic.src = sources[index].src;
+      backgroundMusic.load();
+      return true;
+    };
+
+    const fallbackAudioSource = () => {
+      if (activeSource >= sources.length - 1) return false;
+      clearTimeout(sourceFallbackTimer);
+      musicStarted = false;
+      playPending = false;
+      useAudioSource(activeSource + 1);
+      return true;
+    };
+
+    // Prefer the CDN, but never let a stalled mobile-network request block
+    // playback indefinitely; switch to the same file served by GitHub Pages.
+    useAudioSource(0);
+    backgroundMusic.addEventListener('stalled', fallbackAudioSource);
     const markPlaying = () => {
       // "playing" means the media element left the paused state, but on some
       // Android/browser combinations the clock can still remain frozen at 0.
@@ -88,6 +109,13 @@
         }
         const playRequest = backgroundMusic.play();
 
+        clearTimeout(sourceFallbackTimer);
+        sourceFallbackTimer = window.setTimeout(() => {
+          const noMetadata = !(backgroundMusic.duration > 0);
+          const notMoving = backgroundMusic.currentTime <= 0.05;
+          if (noMetadata || notMoving) fallbackAudioSource();
+        }, 1800);
+
         Promise.resolve(playRequest).then(() => {
           // Do NOT set musicStarted here. The browser promise only tells us
           // the play request was accepted; the media timeline must move too.
@@ -133,12 +161,19 @@
       playPending = false;
     });
 
+    backgroundMusic.addEventListener('loadedmetadata', () => {
+      clearTimeout(sourceFallbackTimer);
+      sourceFallbackTimer = 0;
+    });
+
     backgroundMusic.addEventListener('error', () => {
-      musicStarted = false;
-      playPending = false;
-      if (playbackWatchdog) {
-        clearTimeout(playbackWatchdog);
-        playbackWatchdog = 0;
+      if (!fallbackAudioSource()) {
+        musicStarted = false;
+        playPending = false;
+        if (playbackWatchdog) {
+          clearTimeout(playbackWatchdog);
+          playbackWatchdog = 0;
+        }
       }
     });
 
