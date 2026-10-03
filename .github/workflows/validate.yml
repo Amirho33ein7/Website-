@@ -102,13 +102,13 @@ jobs:
                   with urllib.request.urlopen(req, timeout=15) as r:
                       html = r.read().decode("utf-8", "replace")
                       last = html
-                      if "20261003-audiofix" in html:
+                      if "20261003-native-audio-v7" in html:
                           break
               except Exception:
                   pass
               time.sleep(5)
           else:
-              raise SystemExit("Deployed page did not expose the new audio script marker.")
+              raise SystemExit("Deployed page did not expose the native audio script marker.")
 
           req = urllib.request.Request(audio, method="HEAD", headers={"Cache-Control":"no-cache"})
           with urllib.request.urlopen(req, timeout=20) as r:
