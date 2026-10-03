@@ -19,10 +19,10 @@
   onScroll();
 
   // Background music uses Web Audio instead of HTMLMediaElement.
-  // The AudioContext is created/resumed from a real user gesture, then a fully
-  // decoded AudioBufferSourceNode is started and looped. This avoids the
-  // Android cases where an <audio> element can remain visually at 0:00.
+  // A direct user click is the reliable recovery path on browsers that keep
+  // AudioContext suspended after incidental touch/scroll interaction.
   const MUSIC_URL = new URL('riserayss - Worry - Ultra Slowed (128).mp3', document.baseURI).href;
+  const musicStartButton = $('#musicStartButton');
 
   let musicContext = null;
   let musicBufferPromise = null;
@@ -32,6 +32,14 @@
   let musicStarted = false;
   let musicPending = false;
   let musicStartTime = null;
+
+  const showMusicRecovery = () => {
+    if (musicStartButton) musicStartButton.hidden = false;
+  };
+
+  const hideMusicRecovery = () => {
+    if (musicStartButton) musicStartButton.hidden = true;
+  };
 
   const getMusicContext = () => {
     if (!musicContext) {
@@ -74,6 +82,17 @@
     musicSource = null;
   };
 
+  const resumeWithTimeout = async (ctx) => {
+    if (ctx.state === 'running') return;
+    const timeout = new Promise((_, reject) => {
+      window.setTimeout(() => reject(new Error('AudioContext resume timed out')), 1200);
+    });
+    await Promise.race([ctx.resume(), timeout]);
+    if (ctx.state !== 'running') {
+      throw new Error('AudioContext did not reach running state');
+    }
+  };
+
   const startWebAudioMusic = async () => {
     if (musicStarted || musicPending) return;
 
@@ -82,16 +101,14 @@
     try {
       const ctx = getMusicContext();
 
-      // This call MUST happen from the user gesture path.
-      if (ctx.state !== 'running') {
-        await ctx.resume();
-      }
-
-      if (ctx.state !== 'running') {
-        throw new Error('AudioContext did not reach running state');
-      }
+      // Resume immediately from the user-activation event.
+      await resumeWithTimeout(ctx);
 
       const buffer = await decodeMusic();
+
+      // The context may have been suspended while the MP3 decoded; resume again
+      // before creating/starting the source.
+      await resumeWithTimeout(ctx);
 
       stopMusicSource();
 
@@ -104,30 +121,41 @@
       musicSource.loop = true;
       musicSource.connect(musicGain);
 
-      // Start immediately on the running context. The source's loop is handled
-      // natively by Web Audio, so there is no HTML media timeline stuck at 0:00.
-      musicSource.start(0);
+      musicSource.onended = () => {
+        // A looped source should not end during normal playback.
+        if (musicSource && !musicSource.loop) {
+          musicStarted = false;
+          showMusicRecovery();
+        }
+      };
 
+      musicSource.start(0);
       musicStartTime = ctx.currentTime;
       musicStarted = true;
       musicPending = false;
+      hideMusicRecovery();
     } catch (error) {
       musicStarted = false;
       musicPending = false;
       console.error('Background music failed:', error);
+      showMusicRecovery();
     }
   };
 
-  // Use the earliest touch/pointer event so Android receives the activation.
-  ['pointerdown', 'touchstart', 'click', 'keydown'].forEach(type => {
+  // Incidental user interaction gets a chance to start music automatically.
+  ['pointerup', 'touchend', 'click', 'keydown'].forEach(type => {
     document.addEventListener(type, () => {
       void startWebAudioMusic();
-    }, {passive: true, capture: true});
+    }, {passive:true, capture:true});
   });
 
-  // Mobile browsers can suspend audio while the page is backgrounded.
+  // A direct click on this control is the explicit user-activation fallback.
+  musicStartButton?.addEventListener('click', () => {
+    void startWebAudioMusic();
+  });
+
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && musicContext && musicContext.state !== 'running' && musicStarted) {
+    if (!document.hidden && musicContext && musicStarted && musicContext.state !== 'running') {
       musicContext.resume().catch(() => {});
     }
   });
@@ -143,7 +171,7 @@
     sourceStarted: !!musicSource && musicStarted,
     startTime: musicStartTime,
     pending: musicPending,
-    error: null
+    recoveryVisible: !!musicStartButton && !musicStartButton.hidden
   });
 
   const menuBtn = $('#menuBtn');
