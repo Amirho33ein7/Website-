@@ -42,13 +42,14 @@
     try { backgroundMusic.load(); } catch (_) {}
 
     const markPlaying = () => {
+      // "playing" means the media element left the paused state, but on some
+      // Android/browser combinations the clock can still remain frozen at 0.
+      // Keep the watchdog alive until currentTime has actually advanced.
       musicStarted = true;
       playPending = false;
       lastObservedTime = backgroundMusic.currentTime || 0;
-      if (playbackWatchdog) {
-        clearTimeout(playbackWatchdog);
-        playbackWatchdog = 0;
-      }
+      if (playbackWatchdog) clearTimeout(playbackWatchdog);
+      playbackWatchdog = window.setTimeout(verifyPlayback, 900);
     };
 
     const verifyPlayback = () => {
@@ -82,6 +83,9 @@
       lastObservedTime = backgroundMusic.currentTime || 0;
 
       try {
+        if (backgroundMusic.readyState === 0 || backgroundMusic.networkState === HTMLMediaElement.NETWORK_EMPTY) {
+          backgroundMusic.load();
+        }
         const playRequest = backgroundMusic.play();
 
         Promise.resolve(playRequest).then(() => {
