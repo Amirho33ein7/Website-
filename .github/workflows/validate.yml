@@ -135,6 +135,33 @@ jobs:
                 await page.goto('http://127.0.0.1:8080/', {waitUntil:'networkidle'});
                 await page.waitForTimeout(300);
 
+                // Use a real browser gesture so the site's audio activation path is exercised.
+                await page.mouse.click(120, 120);
+                await page.waitForTimeout(250);
+
+                const audioState = await page.evaluate(() => {
+                  const audio = document.querySelector('#backgroundMusic');
+                  if (!audio) return {present:false};
+                  return {
+                    present:true,
+                    paused:audio.paused,
+                    muted:audio.muted,
+                    defaultMuted:audio.defaultMuted,
+                    volume:audio.volume,
+                    readyState:audio.readyState,
+                    duration:audio.duration,
+                    currentSrc:audio.currentSrc
+                  };
+                });
+
+                if (!audioState.present) throw new Error(viewport.name + ' background music element missing');
+                if (audioState.muted || audioState.defaultMuted) throw new Error(viewport.name + ' background music is muted');
+                if (!(audioState.volume > 0)) throw new Error(viewport.name + ' background music volume is zero');
+                if (!(audioState.readyState >= 2) || !(audioState.duration > 0)) {
+                  throw new Error(viewport.name + ' background music did not load a playable media resource: ' + JSON.stringify(audioState));
+                }
+                if (audioState.paused) throw new Error(viewport.name + ' background music did not start after real user interaction');
+
                 const state = await page.evaluate(() => {
                   const items = [...document.querySelectorAll('.timeline-item')];
                   const project7 = document.querySelector('.timeline-item[data-index="07"]');
