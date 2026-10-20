@@ -103,9 +103,9 @@ jobs:
           grep -Fq 'https://github.com/Amirho33ein7/RAAD' /tmp/index-response.html
           grep -Fq 'Rank Analysis And Dashboard' /tmp/index-response.html
           grep -Fq 'داشبورد تحلیل رنک' /tmp/index-response.html
-          grep -Fq 'class="raad-gun-svg"' /tmp/index-response.html
-          grep -Fq 'animation: raadGunSpin 9s linear infinite' styles.css
-          grep -Fq 'animation: raadGunShot 5s steps(1, end) infinite' styles.css
+          grep -Fq 'class="raad-reactor-svg"' /tmp/index-response.html
+          grep -Fq 'animation: raadReactorSpin 7s linear infinite' styles.css
+          grep -Fq 'animation: raadReactorPulse 5s ease-out infinite' styles.css
           grep -Fq 'prefers-reduced-motion: reduce' styles.css
           if grep -Eqi 'EXCLUDED BY REQUEST|این repository عمداً در Portfolio نمایش داده نمی‌شود|<strong>[[:space:]]*amirvpn[[:space:]]*</strong>' /tmp/index-response.html; then
             echo "Obsolete amirvpn notice must not appear in portfolio HTML."
@@ -175,10 +175,10 @@ jobs:
                     raadEnglishExpansion: !!expansion8 && expansion8.innerText.replace(/\\s+/g, ' ').includes('Rank Analysis And Dashboard'),
                     raadPersianMeaning: !!expansion8 && expansion8.innerText.includes('داشبورد تحلیل رنک'),
                     obsoleteVpnNotice: /EXCLUDED BY REQUEST|این repository عمداً در Portfolio نمایش داده نمی‌شود|amirvpn/i.test(document.body.innerText),
-                    raadGun: !!project8?.querySelector('.raad-gun-svg'),
-                    raadGunSpinDuration: project8?.querySelector('.raad-gun-rotor') ? getComputedStyle(project8.querySelector('.raad-gun-rotor')).animationDuration : '',
-                    raadGunShotDuration: project8?.querySelector('.raad-muzzle-flash') ? getComputedStyle(project8.querySelector('.raad-muzzle-flash')).animationDuration : '',
-                    raadGunShotLine: !!project8?.querySelector('.raad-shot-line'),
+                    raadReactor: !!project8?.querySelector('.raad-reactor-svg'),
+                    raadReactorSpinDuration: project8?.querySelector('.raad-reactor-rotor') ? getComputedStyle(project8.querySelector('.raad-reactor-rotor')).animationDuration : '',
+                    raadReactorPulseDuration: project8?.querySelector('.raad-reactor-pulse') ? getComputedStyle(project8.querySelector('.raad-reactor-pulse')).animationDuration : '',
+                    raadReactorPulse: !!project8?.querySelector('.raad-reactor-pulse'),
                     raadVisualVisible: !!visual8 && visual8.getBoundingClientRect().width > 0 && visual8.getBoundingClientRect().height > 0,
                     raadCardVisible: !!card8 && card8.getBoundingClientRect().width > 0 && card8.getBoundingClientRect().height > 0 && getComputedStyle(card8).visibility !== 'hidden' && getComputedStyle(card8).display !== 'none' && Number(getComputedStyle(card8).opacity || 1) > 0,
                     rahhesabVisualVisible: !!visualRect && visualRect.width > 0 && visualRect.height > 0,
@@ -196,8 +196,8 @@ jobs:
                 if (!state.summary8) throw new Error(viewport.name + ' 8-project summary counter missing');
                 if (!state.raadExpansionVisible || !state.raadEnglishExpansion || !state.raadPersianMeaning) throw new Error(viewport.name + ' RAAD expansion / Persian meaning missing');
                 if (state.obsoleteVpnNotice) throw new Error(viewport.name + ' obsolete amirvpn notice still appears');
-                if (!state.raadGun || !state.raadGunShotLine) throw new Error(viewport.name + ' RAAD decorative gun / shot effect missing');
-                if (state.raadGunSpinDuration !== '9s' || state.raadGunShotDuration !== '5s') throw new Error(viewport.name + ' RAAD gun/shot animation timing is incorrect');
+                if (!state.raadReactor || !state.raadReactorPulse) throw new Error(viewport.name + ' RAAD reactor / pulse effect missing');
+                if (state.raadReactorSpinDuration !== '7s' || state.raadReactorPulseDuration !== '5s') throw new Error(viewport.name + ' RAAD reactor animation timing is incorrect');
                 if (!state.raadVisualVisible || !state.raadCardVisible) throw new Error(viewport.name + ' RAAD visual/card is not visible');
                 if (state.overflow || state.badItems.length) throw new Error(viewport.name + ' horizontal overflow: ' + JSON.stringify(state.badItems));
 
