@@ -380,3 +380,67 @@ body {
   .raad-expansion-words { gap: 3px 10px; font-size: 11px; }
   .raad-expansion-meaning { font-size: 11px; }
 }
+
+
+/* RAAD decorative sci-fi weapon animation: spins like the Ario coin and fires a visual flash every 5 seconds. */
+.raad-weapon-bay {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 78px;
+  margin: 7px -7px 12px;
+  overflow: hidden;
+  perspective: 720px;
+  border-bottom: 1px solid rgba(112, 231, 255, .12);
+  background: radial-gradient(ellipse at 50% 50%, rgba(70, 190, 255, .09), transparent 68%);
+}
+.raad-gun-rotor {
+  position: relative;
+  width: 100%;
+  max-width: 290px;
+  aspect-ratio: 440 / 140;
+  transform-style: preserve-3d;
+  transform-origin: 50% 50%;
+  animation: raadGunSpin 9s linear infinite;
+}
+.raad-gun-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 5px 14px rgba(28, 157, 205, .2));
+  backface-visibility: visible;
+}
+.raad-shot-line,
+.raad-muzzle-flash {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: raadGunShot 5s steps(1, end) infinite;
+}
+.raad-muzzle-flash { transform-origin: 399px 60px; }
+@keyframes raadGunSpin {
+  from { transform: rotateY(0deg); }
+  to { transform: rotateY(360deg); }
+}
+@keyframes raadGunShot {
+  0%, 87%, 94%, 100% { opacity: 0; }
+  88%, 92% { opacity: 1; }
+}
+@media (max-width: 560px) {
+  .visual-raad { min-height: 440px; }
+  .raad-weapon-bay { height: 70px; margin: 5px -6px 9px; }
+  .raad-card { padding: 14px; }
+  .raad-gun-rotor { max-width: 250px; }
+  .raad-brand { margin-top: 12px; padding-bottom: 10px; }
+  .raad-feature-list { gap: 5px; margin: 10px 0; }
+  .raad-feature-list div { padding: 7px 8px; }
+  .raad-footer { padding-top: 8px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .raad-gun-rotor,
+  .raad-shot-line,
+  .raad-muzzle-flash { animation: none; }
+  .raad-shot-line,
+  .raad-muzzle-flash { opacity: 0; }
+}
