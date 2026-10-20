@@ -100,6 +100,7 @@ jobs:
           grep -Fq 'food-delivery-python' /tmp/index-response.html
           grep -Fq 'benzine-fuel-level-checker' /tmp/index-response.html
           grep -Fq 'kalorichand' /tmp/index-response.html
+          grep -Fq 'https://github.com/Amirho33ein7/RAAD' /tmp/index-response.html
           if grep -Fqi 'github.com/Amirho33ein7/amirvpn' /tmp/index-response.html; then
             echo "amirvpn leaked into generated HTML."
             exit 1
@@ -140,6 +141,9 @@ jobs:
                   const project7 = document.querySelector('.timeline-item[data-index="07"]');
                   const visual7 = project7?.querySelector('.visual-rahhesab');
                   const card7 = project7?.querySelector('.rahhesab-card');
+                  const project8 = document.querySelector('.timeline-item[data-index="08"]');
+                  const visual8 = project8?.querySelector('.visual-raad');
+                  const card8 = project8?.querySelector('.raad-card');
                   const overflow = document.documentElement.scrollWidth > document.documentElement.clientWidth + 2;
                   const badItems = items.filter(el => {
                     const r = el.getBoundingClientRect();
@@ -154,6 +158,11 @@ jobs:
                     project7: !!project7,
                     rahhesabLink: !!project7?.querySelector('a[href="https://github.com/Amirho33ein7/rah-hesab"]'),
                     summary7: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '7'),
+                    project8: !!project8,
+                    raadLink: !!project8?.querySelector('a[href="https://github.com/Amirho33ein7/RAAD"]'),
+                    summary8: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '8'),
+                    raadVisualVisible: !!visual8 && visual8.getBoundingClientRect().width > 0 && visual8.getBoundingClientRect().height > 0,
+                    raadCardVisible: !!card8 && card8.getBoundingClientRect().width > 0 && card8.getBoundingClientRect().height > 0 && getComputedStyle(card8).visibility !== 'hidden' && getComputedStyle(card8).display !== 'none' && Number(getComputedStyle(card8).opacity || 1) > 0,
                     rahhesabVisualVisible: !!visualRect && visualRect.width > 0 && visualRect.height > 0,
                     rahhesabCardVisible: !!cardRect && cardRect.width > 0 && cardRect.height > 0 && cardStyle?.visibility !== 'hidden' && cardStyle?.display !== 'none' && Number(cardStyle?.opacity || 1) > 0,
                     overflow,
@@ -162,10 +171,13 @@ jobs:
                 });
 
                 if (errors.length) throw new Error(viewport.name + ' runtime errors: ' + errors.join(' | '));
-                if (state.projects !== 7) throw new Error(viewport.name + ' expected 7 timeline projects, got ' + state.projects);
+                if (state.projects !== 8) throw new Error(viewport.name + ' expected 8 timeline projects, got ' + state.projects);
                 if (!state.project7 || !state.rahhesabLink) throw new Error(viewport.name + ' PROJECT 07 / Rahhesab link missing');
                 if (!state.summary7) throw new Error(viewport.name + ' 7-project summary counter missing');
                 if (!state.rahhesabVisualVisible || !state.rahhesabCardVisible) throw new Error(viewport.name + ' Rahhesab visual/card is not visible');
+                if (!state.project8 || !state.raadLink) throw new Error(viewport.name + ' PROJECT 08 / RAAD link missing');
+                if (!state.summary8) throw new Error(viewport.name + ' 8-project summary counter missing');
+                if (!state.raadVisualVisible || !state.raadCardVisible) throw new Error(viewport.name + ' RAAD visual/card is not visible');
                 if (state.overflow || state.badItems.length) throw new Error(viewport.name + ' horizontal overflow: ' + JSON.stringify(state.badItems));
 
                 await page.close();
