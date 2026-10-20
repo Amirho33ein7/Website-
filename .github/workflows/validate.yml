@@ -157,7 +157,6 @@ jobs:
                     projects: items.length,
                     project7: !!project7,
                     rahhesabLink: !!project7?.querySelector('a[href="https://github.com/Amirho33ein7/rah-hesab"]'),
-                    summary7: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '7'),
                     project8: !!project8,
                     raadLink: !!project8?.querySelector('a[href="https://github.com/Amirho33ein7/RAAD"]'),
                     summary8: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '8'),
@@ -173,7 +172,6 @@ jobs:
                 if (errors.length) throw new Error(viewport.name + ' runtime errors: ' + errors.join(' | '));
                 if (state.projects !== 8) throw new Error(viewport.name + ' expected 8 timeline projects, got ' + state.projects);
                 if (!state.project7 || !state.rahhesabLink) throw new Error(viewport.name + ' PROJECT 07 / Rahhesab link missing');
-                if (!state.summary7) throw new Error(viewport.name + ' 7-project summary counter missing');
                 if (!state.rahhesabVisualVisible || !state.rahhesabCardVisible) throw new Error(viewport.name + ' Rahhesab visual/card is not visible');
                 if (!state.project8 || !state.raadLink) throw new Error(viewport.name + ' PROJECT 08 / RAAD link missing');
                 if (!state.summary8) throw new Error(viewport.name + ' 8-project summary counter missing');
