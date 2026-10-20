@@ -103,6 +103,10 @@ jobs:
           grep -Fq 'https://github.com/Amirho33ein7/RAAD' /tmp/index-response.html
           grep -Fq 'Rank Analysis And Dashboard' /tmp/index-response.html
           grep -Fq 'داشبورد تحلیل رنک' /tmp/index-response.html
+          if grep -Eqi 'EXCLUDED BY REQUEST|این repository عمداً در Portfolio نمایش داده نمی‌شود|<strong>[[:space:]]*amirvpn[[:space:]]*</strong>' /tmp/index-response.html; then
+            echo "Obsolete amirvpn notice must not appear in portfolio HTML."
+            exit 1
+          fi
           if grep -Fqi 'github.com/Amirho33ein7/amirvpn' /tmp/index-response.html; then
             echo "amirvpn leaked into generated HTML."
             exit 1
@@ -166,6 +170,7 @@ jobs:
                     raadExpansionVisible: !!expansion8 && expansion8.getBoundingClientRect().width > 0 && expansion8.getBoundingClientRect().height > 0,
                     raadEnglishExpansion: !!expansion8 && expansion8.innerText.replace(/\\s+/g, ' ').includes('Rank Analysis And Dashboard'),
                     raadPersianMeaning: !!expansion8 && expansion8.innerText.includes('داشبورد تحلیل رنک'),
+                    obsoleteVpnNotice: /EXCLUDED BY REQUEST|این repository عمداً در Portfolio نمایش داده نمی‌شود|amirvpn/i.test(document.body.innerText),
                     raadVisualVisible: !!visual8 && visual8.getBoundingClientRect().width > 0 && visual8.getBoundingClientRect().height > 0,
                     raadCardVisible: !!card8 && card8.getBoundingClientRect().width > 0 && card8.getBoundingClientRect().height > 0 && getComputedStyle(card8).visibility !== 'hidden' && getComputedStyle(card8).display !== 'none' && Number(getComputedStyle(card8).opacity || 1) > 0,
                     rahhesabVisualVisible: !!visualRect && visualRect.width > 0 && visualRect.height > 0,
@@ -182,6 +187,7 @@ jobs:
                 if (!state.project8 || !state.raadLink) throw new Error(viewport.name + ' PROJECT 08 / RAAD link missing');
                 if (!state.summary8) throw new Error(viewport.name + ' 8-project summary counter missing');
                 if (!state.raadExpansionVisible || !state.raadEnglishExpansion || !state.raadPersianMeaning) throw new Error(viewport.name + ' RAAD expansion / Persian meaning missing');
+                if (state.obsoleteVpnNotice) throw new Error(viewport.name + ' obsolete amirvpn notice still appears');
                 if (!state.raadVisualVisible || !state.raadCardVisible) throw new Error(viewport.name + ' RAAD visual/card is not visible');
                 if (state.overflow || state.badItems.length) throw new Error(viewport.name + ' horizontal overflow: ' + JSON.stringify(state.badItems));
 
