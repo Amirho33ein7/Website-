@@ -333,3 +333,50 @@ body {
   .raad-feature-list i { font-size:6px; }
   .raad-footer { padding-top:9px; letter-spacing:.04em; }
 }
+
+
+/* Clear, typographic expansion of the RAAD name in the project description. */
+.raad-expansion {
+  display: block;
+  width: fit-content;
+  max-width: 100%;
+  margin: 16px 0 20px;
+  padding: 13px 16px 12px;
+  border: 1px solid rgba(112, 231, 255, .15);
+  border-right: 2px solid rgba(112, 231, 255, .72);
+  border-radius: 12px;
+  background: linear-gradient(110deg, rgba(112, 231, 255, .045), rgba(255, 255, 255, .012));
+}
+.raad-expansion-label {
+  color: #758a9e;
+  font: 600 8px/1.4 "JetBrains Mono", monospace;
+  letter-spacing: .14em;
+  direction: ltr;
+  text-align: left;
+}
+.raad-expansion-words {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 5px 13px;
+  margin: 9px 0 8px;
+  color: #e2edf5;
+  direction: ltr;
+  font: 700 12px/1.7 "Plus Jakarta Sans", sans-serif;
+  letter-spacing: -.015em;
+}
+.raad-expansion-words span { white-space: nowrap; }
+.raad-expansion-words b {
+  color: #70e7ff;
+  font-weight: 800;
+}
+.raad-expansion-meaning {
+  margin: 0;
+  color: #a2b1bf;
+  font: 600 12px/1.8 "Estedad", sans-serif;
+}
+@media (max-width: 560px) {
+  .raad-expansion { margin: 13px 0 17px; padding: 11px 12px 10px; }
+  .raad-expansion-words { gap: 3px 10px; font-size: 11px; }
+  .raad-expansion-meaning { font-size: 11px; }
+}
