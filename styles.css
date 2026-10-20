@@ -289,3 +289,47 @@ body {
     padding-inline-end: .09em;
   }
 }
+
+
+/* RAAD project visual: a decorative project-card mockup, not a screenshot of the app. */
+.visual-raad {
+  isolation: isolate; overflow: hidden; min-height: 540px;
+  background: radial-gradient(circle at 48% 42%, rgba(72,169,255,.20), transparent 34%),
+    radial-gradient(circle at 75% 72%, rgba(82,255,205,.11), transparent 27%),
+    linear-gradient(150deg, #071522, #090c13);
+}
+.raad-stage { position:absolute; inset:0; display:grid; place-items:center; overflow:hidden; }
+.raad-orbit { position:absolute; border:1px solid rgba(87,193,255,.16); border-radius:50%; transform:rotate(-16deg); pointer-events:none; }
+.raad-orbit-one { width:410px; height:410px; }
+.raad-orbit-two { width:288px; height:288px; border-color:rgba(82,255,205,.12); }
+.raad-card {
+  position:relative; z-index:2; width:min(82%,350px); max-width:calc(100% - 38px);
+  padding:23px; border:1px solid rgba(98,194,255,.20); border-radius:24px; color:#eaf7ff;
+  background:linear-gradient(145deg,rgba(13,30,48,.97),rgba(8,16,27,.96));
+  box-shadow:0 32px 90px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.04); transform:rotate(-2deg);
+}
+.raad-top,.raad-footer { display:flex; justify-content:space-between; gap:12px; color:#6f8da5; font:600 7px "JetBrains Mono",monospace; letter-spacing:.08em; }
+.raad-brand { display:flex; flex-direction:column; align-items:flex-start; margin-top:22px; padding-bottom:18px; border-bottom:1px solid rgba(255,255,255,.08); }
+.raad-brand small { color:#6c91ac; font:600 7px "JetBrains Mono",monospace; letter-spacing:.17em; }
+.raad-brand strong { margin-top:3px; color:#70e7ff; font:800 40px/1.35 "Estedad",sans-serif; letter-spacing:-.05em; text-shadow:0 0 25px rgba(80,212,255,.18); }
+.raad-brand span { margin-top:3px; color:#a3b9c9; font:600 8px "JetBrains Mono",monospace; letter-spacing:.08em; }
+.raad-feature-list { display:grid; gap:8px; margin:17px 0; }
+.raad-feature-list div { display:grid; grid-template-columns:24px minmax(0,1fr); align-items:center; column-gap:8px; padding:11px 10px; border:1px solid rgba(255,255,255,.07); border-radius:12px; background:rgba(255,255,255,.025); }
+.raad-feature-list div > span { grid-row:span 2; color:#45d5cc; font:600 8px "JetBrains Mono",monospace; }
+.raad-feature-list b { color:#d9edf8; font:700 8px "JetBrains Mono",monospace; letter-spacing:.04em; }
+.raad-feature-list i { margin-top:4px; color:#68859d; font:normal 600 6px "JetBrains Mono",monospace; letter-spacing:.08em; }
+.raad-footer { padding-top:12px; border-top:1px solid rgba(255,255,255,.07); color:#5f7d94; font-size:6px; }
+@media (max-width:560px) {
+  .visual-raad { min-height:330px; }
+  .raad-stage { inset:0; display:flex; align-items:center; justify-content:center; }
+  .raad-orbit-one { width:285px; height:285px; }
+  .raad-orbit-two { width:205px; height:205px; }
+  .raad-card { width:calc(100% - 42px); max-width:310px; padding:17px; transform:rotate(-1deg); }
+  .raad-brand { margin-top:15px; padding-bottom:12px; }
+  .raad-brand strong { font-size:32px; }
+  .raad-feature-list { gap:6px; margin:12px 0; }
+  .raad-feature-list div { padding:8px 9px; }
+  .raad-feature-list b { font-size:7px; }
+  .raad-feature-list i { font-size:6px; }
+  .raad-footer { padding-top:9px; letter-spacing:.04em; }
+}
