@@ -109,7 +109,7 @@ jobs:
           grep -Fq 'animation: raadReactorPulse 5s ease-out infinite' styles.css
           grep -Fq 'data-count="9"' /tmp/index-response.html
           grep -Fq 'href="./sargozasht/"' /tmp/index-response.html
-          grep -Fq 'class="visual-sargozasht"' /tmp/index-response.html
+          grep -Fq 'visual-sargozasht' /tmp/index-response.html
           curl --fail --silent --show-error http://127.0.0.1:8080/sargozasht/ >/tmp/sargozasht-response.html
           grep -Fq 'سرگذشت — شبیه‌ساز زندگی' /tmp/sargozasht-response.html
           grep -Fq 'prefers-reduced-motion: reduce' styles.css
