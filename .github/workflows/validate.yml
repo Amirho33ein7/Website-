@@ -27,6 +27,7 @@ jobs:
           test -f favicon.svg
           test -f 404.html
           test -f .nojekyll
+          test -f sargozasht/index.html
 
       - name: Ensure VPN project is excluded
         shell: bash
@@ -106,6 +107,11 @@ jobs:
           grep -Fq 'class="raad-reactor-svg"' /tmp/index-response.html
           grep -Fq 'animation: raadReactorSpin 7s linear infinite' styles.css
           grep -Fq 'animation: raadReactorPulse 5s ease-out infinite' styles.css
+          grep -Fq 'data-count="9"' /tmp/index-response.html
+          grep -Fq 'href="./sargozasht/"' /tmp/index-response.html
+          grep -Fq 'class="visual-sargozasht"' /tmp/index-response.html
+          curl --fail --silent --show-error http://127.0.0.1:8080/sargozasht/ >/tmp/sargozasht-response.html
+          grep -Fq 'سرگذشت — شبیه‌ساز زندگی' /tmp/sargozasht-response.html
           grep -Fq 'prefers-reduced-motion: reduce' styles.css
           if grep -Eqi 'EXCLUDED BY REQUEST|این repository عمداً در Portfolio نمایش داده نمی‌شود|<strong>[[:space:]]*amirvpn[[:space:]]*</strong>' /tmp/index-response.html; then
             echo "Obsolete amirvpn notice must not appear in portfolio HTML."
@@ -152,6 +158,9 @@ jobs:
                   const visual7 = project7?.querySelector('.visual-rahhesab');
                   const card7 = project7?.querySelector('.rahhesab-card');
                   const project8 = document.querySelector('.timeline-item[data-index="08"]');
+                  const project9 = document.querySelector('.timeline-item[data-index="09"]');
+                  const visual9 = project9?.querySelector('.visual-sargozasht');
+                  const card9 = project9?.querySelector('.sargozasht-life-card');
                   const visual8 = project8?.querySelector('.visual-raad');
                   const card8 = project8?.querySelector('.raad-card');
                   const expansion8 = project8?.querySelector('.raad-expansion');
@@ -169,8 +178,12 @@ jobs:
                     project7: !!project7,
                     rahhesabLink: !!project7?.querySelector('a[href="https://github.com/Amirho33ein7/rah-hesab"]'),
                     project8: !!project8,
+                    project9: !!project9,
+                    gameLaunchLink: !!project9?.querySelector('a[href="./sargozasht/"]'),
+                    summary9: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '9'),
+                    sargozashtVisualVisible: !!visual9 && visual9.getBoundingClientRect().width > 0 && visual9.getBoundingClientRect().height > 0,
+                    sargozashtCardVisible: !!card9 && card9.getBoundingClientRect().width > 0 && card9.getBoundingClientRect().height > 0 && getComputedStyle(card9).visibility !== 'hidden' && getComputedStyle(card9).display !== 'none' && Number(getComputedStyle(card9).opacity || 1) > 0,
                     raadLink: !!project8?.querySelector('a[href="https://github.com/Amirho33ein7/RAAD"]'),
-                    summary8: [...document.querySelectorAll('[data-count]')].some(el => el.dataset.count === '8'),
                     raadExpansionVisible: !!expansion8 && expansion8.getBoundingClientRect().width > 0 && expansion8.getBoundingClientRect().height > 0,
                     raadEnglishExpansion: !!expansion8 && expansion8.innerText.replace(/\\s+/g, ' ').includes('Rank Analysis And Dashboard'),
                     raadPersianMeaning: !!expansion8 && expansion8.innerText.includes('داشبورد تحلیل رنک'),
@@ -189,11 +202,13 @@ jobs:
                 });
 
                 if (errors.length) throw new Error(viewport.name + ' runtime errors: ' + errors.join(' | '));
-                if (state.projects !== 8) throw new Error(viewport.name + ' expected 8 timeline projects, got ' + state.projects);
+                if (state.projects !== 9) throw new Error(viewport.name + ' expected 9 timeline projects, got ' + state.projects);
                 if (!state.project7 || !state.rahhesabLink) throw new Error(viewport.name + ' PROJECT 07 / Rahhesab link missing');
                 if (!state.rahhesabVisualVisible || !state.rahhesabCardVisible) throw new Error(viewport.name + ' Rahhesab visual/card is not visible');
                 if (!state.project8 || !state.raadLink) throw new Error(viewport.name + ' PROJECT 08 / RAAD link missing');
-                if (!state.summary8) throw new Error(viewport.name + ' 8-project summary counter missing');
+                if (!state.project9 || !state.gameLaunchLink) throw new Error(viewport.name + ' PROJECT 09 / game launch link missing');
+                if (!state.summary9) throw new Error(viewport.name + ' 9-project summary counter missing');
+                if (!state.sargozashtVisualVisible || !state.sargozashtCardVisible) throw new Error(viewport.name + ' Sargozasht visual/card is not visible');
                 if (!state.raadExpansionVisible || !state.raadEnglishExpansion || !state.raadPersianMeaning) throw new Error(viewport.name + ' RAAD expansion / Persian meaning missing');
                 if (state.obsoleteVpnNotice) throw new Error(viewport.name + ' obsolete amirvpn notice still appears');
                 if (!state.raadReactor || !state.raadReactorPulse) throw new Error(viewport.name + ' RAAD reactor / pulse effect missing');
